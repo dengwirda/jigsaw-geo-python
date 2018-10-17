@@ -85,7 +85,7 @@ This program may be freely redistributed under the condition that the copyright 
 
 ## `References`
 
-There are a number of publications that describe the algorithms used in `JIGSAW(GEO)` in detail. Additional information and references regarding the formulation of the underlying `JIGSAW` mesh-generator can also be found <a href="https://github.com/dengwirda/jigsaw-matlab">here</a>. If you make use of `JIGSAW` in your work, please consider including a reference to the following: 
+There are a number of publications that describe the algorithms used in `JIGSAW(GEO)` in detail. Additional information and references regarding the formulation of the underlying `JIGSAW` mesh-generator can also be found <a href="https://github.com/dengwirda/jigsaw">here</a>. If you make use of `JIGSAW` in your work, please consider including a reference to the following: 
 
 `[1]` - Darren Engwirda: Generalised primal-dual grids for unstructured co-volume schemes, J. Comp. Phys., 375, pp. 155-176, https://doi.org/10.1016/j.jcp.2018.07.025, 2018.
 
