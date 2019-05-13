@@ -15,6 +15,7 @@ class jigsaw_cells_t:
     #------------------------------------------ CELL struct.
         self.index = \
     np.empty([ncel,nidx],dtype=  np.int32)
+        
         self.IDtag = \
     np.empty([ncel],     dtype=  np.int32)
 
@@ -27,14 +28,14 @@ class jigsaw_index_t:
 class jigsaw_msh_t:
     def __init__(self):
     #------------------------------------------ MESH struct.
-        self.mshID = "EUCLIDEAN-MESH"
+        self.mshID = "euclidean-mesh"
         self.ndims = +0
     
         self.point = jigsaw_point_t(0,0)
         
         self.power = \
     np.empty([0,0],      dtype=np.float64)
-        
+
         self.radii = \
     np.empty([0],        dtype=np.float64)
         
@@ -43,8 +44,10 @@ class jigsaw_msh_t:
         self.quad4 = jigsaw_cells_t(0,4)
         self.tria4 = jigsaw_cells_t(0,4)
         self.hexa8 = jigsaw_cells_t(0,8)
+        self.pyra5 = jigsaw_cells_t(0,5)
+        self.wedg6 = jigsaw_cells_t(0,6)
         
-        self.bound = jigsaw_index_t(0,2) 
+        self.bound = jigsaw_index_t(0,3) 
         
         self.xgrid = \
     np.empty([0],        dtype=np.float64)

@@ -12,6 +12,7 @@ class jigsaw_jig_t:
         
     #------------------------------------------ INIT options
         self.init_file = None
+        self.init_near = None
         
     #------------------------------------------ GEOM options
         self.geom_file = None

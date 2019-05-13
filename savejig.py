@@ -1,5 +1,6 @@
 
 from jig_t import *
+import os.path
 
 def savechar(file,sval,stag):
 
@@ -55,6 +56,11 @@ def savejig(name,opts):
     if (not isinstance(opts,jigsaw_jig_t)):
         raise Exception("Incorrect type: OPTS.")
 
+    fext = os.path.splitext(name)[1]
+    
+    if (fext.strip() != ".jig"):
+        name =   name + ".jig"
+
     with open(name,"w") as file:
         
         file.write("# " + name + \
@@ -71,7 +77,10 @@ def savejig(name,opts):
 
     #------------------------------------------ INIT options
         if (opts.init_file is not None):
-            savechar(file,opts.init_file,"INIT_FILE")   
+            savechar(file,opts.init_file,"INIT_FILE")
+
+        if (opts.init_near is not None):
+            savereal(file,opts.init_near,"INIT_NEAR")
             
     #------------------------------------------ GEOM options
         if (opts.geom_file is not None):

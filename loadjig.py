@@ -32,21 +32,23 @@ def loadjig(name,opts):
         #------------------------------------------ MISC options
                 if (item == "VERBOSITY"):
                     opts.verbosity = int  (ltag[1])
-                    print(opts.verbosity)
                     
                 if (item == "TRIA_FILE"):
-                    opts.tria_file =       ltag[1]
+                    opts.tria_file = ltag[1].strip()
                     
                 if (item == "BNDS_FILE"):
-                    opts.bnds_file =       ltag[1]
+                    opts.bnds_file = ltag[1].strip()
                     
         #------------------------------------------ INIT options
                 if (item == "INIT_FILE"):
-                    opts.init_file =       ltag[1]
+                    opts.init_file = ltag[1].strip()
         
+                if (item == "INIT_NEAR"):
+                    opts.init_near = float(ltag[1])
+
         #------------------------------------------ GEOM options
                 if (item == "GEOM_FILE"):
-                    opts.geom_file =       ltag[1]
+                    opts.geom_file = ltag[1].strip()
         
                 if (item == "GEOM_SEED"):
                     opts.geom_seed = int  (ltag[1])
@@ -66,10 +68,10 @@ def loadjig(name,opts):
                     
         #------------------------------------------ HFUN options
                 if (item == "HFUN_FILE"):
-                    opts.hfun_file =       ltag[1]
+                    opts.hfun_file = ltag[1].strip()
         
                 if (item == "HFUN_SCAL"):
-                    opts.hfun_scal =       ltag[1]
+                    opts.hfun_scal = ltag[1].strip()
         
                 if (item == "HFUN_HMAX"):
                     opts.hfun_hmax = float(ltag[1])
@@ -78,12 +80,12 @@ def loadjig(name,opts):
                     
         #------------------------------------------ MESH options
                 if (item == "MESH_FILE"):
-                    opts.mesh_file =       ltag[1]
+                    opts.mesh_file = ltag[1].strip()
                     
                 if (item == "MESH_KERN"):
-                    opts.mesh_kern =       ltag[1]
+                    opts.mesh_kern = ltag[1].strip()
                 if (item == "BNDS_KERN"):
-                    opts.bnds_kern =       ltag[1]
+                    opts.bnds_kern = ltag[1].strip()
         
                 if (item == "MESH_ITER"):
                     opts.mesh_iter = int  (ltag[1])
