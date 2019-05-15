@@ -1,65 +1,10 @@
-
 #
-#   JIGSAW: interfaces to JIGSAW's meshing and tessellation
-#   cmd-line utilities.
-#
-
-#   JIGSAW is a "restricted" Delaunay-refinement and optimi-
-#   sation algorithm for 2- and 3-dimensional meshes. Please
-#   see the following for additional details:
-#
-# * D. Engwirda, (2018): "Generalised primal-dual grids for
-#   unstructured co-volume schemes", J. Comput. Phys., 375
-#   155--176.
-#   https://doi.org/10.1016/j.jcp.2018.07.025
-#
-# * D. Engwirda & D. Ivers, (2016): "Off-centre Steiner poi-
-#   nts for Delaunay-refinement on curved surfaces", Comput-
-#   er-Aided Design, 72, 157--171.
-#   https://doi.org/10.1016/j.cad.2015.10.007
-#
-# * D. Engwirda, (2016): "Conforming Restricted Delaunay 
-#   Mesh Generation for Piecewise Smooth Complexes", Proced-
-#   ia Engineering, 163, 84--96.
-#   https://doi.org/10.1016/j.proeng.2016.11.024
-#
-# * D. Engwirda, (2015): "Voronoi-based Point-placement for 
-#   Three-dimensional Delaunay-refinement", Procedia Engin-
-#   eering, 124, 330--342.
-#   https://doi.org/10.1016/j.proeng.2015.10.143
-#
-# * D. Engwirda, (2014): "Locally-optimal Delaunay-refineme-
-#   nt and optimisation-based mesh generation", Ph.D. Thesis 
-#   School of Mathematics and Statistics, Univ. of Sydney.
-#   https://hdl.handle.net/2123/13148
-#
-
-#-----------------------------------------------------------
-#   Darren Engwirda
-#   github.com/dengwirda/jigsaw-python
-#   13-May-2019
-#   darren.engwirda@columbia.edu
-#-----------------------------------------------------------
-#
-
-import sys
-import subprocess
-
-from pathlib import Path
-
-from loadmsh import *
-from savemsh import *
-from loadjig import *
-from savejig import *
-
-#
-#   JIGSAW: an interface to the JIGSAW mesh generator.
+#   JIGSAW interface to the JIGSAW mesh generator.
 #
 #   JIGSAW(OPTS,MESH)
 #
 #   Call the JIGSAW mesh generator using the config. options 
-#   specified in the OPTS structure. See the SAVEMSH/LOADMSH 
-#   routines for a description of the MESH output structure.
+#   specified in the OPTS structure. 
 #
 #   OPTS is a user-defined set of meshing options:
 #
@@ -257,8 +202,54 @@ from savejig import *
 #   OPTS.VERBOSITY - {default=0} verbosity of log-file gene-
 #       rated by JIGSAW. Set VERBOSITY >= 1 for more output.
 #
-#   See also LOADMSH, SAVEMSH
+
+#   JIGSAW is a "restricted" Delaunay-refinement and optimi-
+#   sation algorithm for 2- and 3-dimensional meshes. Please
+#   see the following for additional details:
 #
+# * D. Engwirda, (2018): "Generalised primal-dual grids for
+#   unstructured co-volume schemes", J. Comput. Phys., 375
+#   155--176.
+#   https://doi.org/10.1016/j.jcp.2018.07.025
+#
+# * D. Engwirda & D. Ivers, (2016): "Off-centre Steiner poi-
+#   nts for Delaunay-refinement on curved surfaces", Comput-
+#   er-Aided Design, 72, 157--171.
+#   https://doi.org/10.1016/j.cad.2015.10.007
+#
+# * D. Engwirda, (2016): "Conforming Restricted Delaunay 
+#   Mesh Generation for Piecewise Smooth Complexes", Proced-
+#   ia Engineering, 163, 84--96.
+#   https://doi.org/10.1016/j.proeng.2016.11.024
+#
+# * D. Engwirda, (2015): "Voronoi-based Point-placement for 
+#   Three-dimensional Delaunay-refinement", Procedia Engin-
+#   eering, 124, 330--342.
+#   https://doi.org/10.1016/j.proeng.2015.10.143
+#
+# * D. Engwirda, (2014): "Locally-optimal Delaunay-refineme-
+#   nt and optimisation-based mesh generation", Ph.D. Thesis 
+#   School of Mathematics and Statistics, Univ. of Sydney.
+#   https://hdl.handle.net/2123/13148
+#
+
+#-----------------------------------------------------------
+#   Darren Engwirda
+#   github.com/dengwirda/jigsaw-python
+#   13-May-2019
+#   darren.engwirda@columbia.edu
+#-----------------------------------------------------------
+#
+
+import sys
+import subprocess
+
+from pathlib import Path
+
+from loadmsh import *
+from savemsh import *
+from loadjig import *
+from savejig import *
 
 def jigsaw(opts,mesh):
    
@@ -311,6 +302,135 @@ def jigsaw(opts,mesh):
             [str(jexename),opts.jcfg_file], check = True)
 
         loadmsh(opts.mesh_file,mesh)
+
+    else:
+
+        raise Exception("JIGSAW's executable not found!")
+
+    return
+
+
+#
+#   TRIPOD interface to the tessellation utility TRIPOD.
+#
+#   TRIPOD(OPTS.MESH)
+#
+#   Call the rDT tessellator TRIPOD using the confg. options 
+#   specified in the OPTS structure.
+#
+#   OPTS is a user-defined set of meshing options:
+#
+#   REQUIRED fields:
+#   ---------------
+#
+#   OPTS.INIT_FILE - 'INITNAME.MSH', a string containing the 
+#       name of the initial distribution file (is required 
+#       at input). See SAVEMSH for additional details regar-
+#       ding the creation of *.MSH files.
+#
+#   OPTS.JCFG_FILE - 'JCFGNAME.JIG', a string containing the 
+#       name of the cofig. file (will be created on output).
+#
+#   OPTS.MESH_FILE - 'MESHNAME.MSH', a string containing the 
+#       name of the output file (will be created on output).
+#
+#   OPTIONAL fields (GEOM):
+#   ----------------------
+#
+#   OPTS.GEOM_FILE - 'GEOMNAME.MSH', a string containing the 
+#       name of the geometry file (is required at input).
+#       When a non-null geometry is passed, MESH is computed
+#       as a "restricted" Delaunay tessellation, including 
+#       various 1-, 2- and/or 3-dimensional sub-meshes that
+#       approximate the geometry definition.
+#
+#   OPTS.GEOM_FEAT - {default=false} attempt to auto-detect 
+#       "sharp-features" in the input geometry. Features can 
+#       lie adjacent to 1-dim. entities, (i.e. geometry 
+#       "edges") and/or 2-dim. entities, (i.e. geometry 
+#       "faces") based on both geometrical and/or topologic-
+#       al constraints. Geometrically, features are located 
+#       between any neighbouring entities that subtend 
+#       angles less than GEOM_ETAX degrees, where "X" is the 
+#       (topological) dimension of the feature. Topological-
+#       ly, features are located at the apex of any non-man-
+#       ifold connections.
+#
+#   OPTS.GEOM_ETA1 - {default=45deg} 1-dim. feature-angle, 
+#       features are located between any neighbouring 
+#       "edges" that subtend angles less than ETA1 deg.
+#
+#   OPTS.GEOM_ETA2 - {default=45deg} 2-dim. feature angle, 
+#       features are located between any neighbouring 
+#       "faces" that subtend angles less than ETA2 deg.
+#
+#   OPTIONAL fields (MESH):
+#   ----------------------
+#
+#   OPTS.MESH_DIMS - {default=3} number of "topological" di-
+#       mensions to mesh. DIMS=K meshes K-dimensional featu-
+#       res, irrespective of the number of spatial dim.'s of 
+#       the problem (i.e. if the geometry is 3-dimensional 
+#       and DIMS=2 a surface mesh will be produced).
+#
+#   OPTIONAL fields (MISC):
+#   ----------------------
+#
+#   OPTS.VERBOSITY - {default=0} verbosity of log-file gene-
+#       rated by JIGSAW. Set VERBOSITY >= 1 for more output.
+#
+
+def tripod(opts,tria):
+   
+    jexename = Path()
+
+    if (not isinstance(opts,jigsaw_jig_t )):
+        raise Exception("Incorrect type: OPTS.")
+
+    if (not isinstance(tria,jigsaw_msh_t )):
+        raise Exception("Incorrect type: MESH.")
+
+    savejig(opts.jcfg_file,opts)
+
+    if (jexename == Path()):
+#---------------------------- set-up path for "local" binary
+        filepath = Path().absolute()
+
+        if   (os.name ==    "nt"):
+            jexename  = filepath \
+          / "jigsaw" / "bin" / "tripod.exe"
+
+        elif (os.name == "posix"):
+            jexename  = filepath \
+          / "jigsaw" / "bin" / "tripod"
+
+        else:
+            jexename  = Path ()
+
+        if (not jexename.is_file()):
+            jexename  = Path ()
+
+    if (jexename == Path()):
+#---------------------------- search machine path for binary        
+        if   (os.name ==    "nt"):
+            jexename  = Path ( "tripod.exe" )
+
+        elif (os.name == "posix"):
+            jexename  = Path ( "tripod" )
+
+        else:
+            jexename  = Path ()
+
+        if (not jexename.is_file()):
+            jexename  = Path ()
+
+
+    if (jexename != Path()):
+#---------------------------- call JIGSAW and capture output
+        subprocess.run( \
+            [str(jexename),opts.jcfg_file], check = True)
+
+        loadmsh(opts.tria_file,tria)
 
     else:
 
