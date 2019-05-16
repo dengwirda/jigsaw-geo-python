@@ -202,6 +202,8 @@
 #   OPTS.VERBOSITY - {default=0} verbosity of log-file gene-
 #       rated by JIGSAW. Set VERBOSITY >= 1 for more output.
 #
+#   See also TRIPOD
+#
 
 #   JIGSAW is a "restricted" Delaunay-refinement and optimi-
 #   sation algorithm for 2- and 3-dimensional meshes. Please
@@ -241,10 +243,12 @@
 #-----------------------------------------------------------
 #
 
-import sys
 import subprocess
+import os
 
 from pathlib import Path
+
+from certify import *
 
 from loadmsh import *
 from savemsh import *
@@ -378,6 +382,8 @@ def jigsaw(opts,mesh):
 #
 #   OPTS.VERBOSITY - {default=0} verbosity of log-file gene-
 #       rated by JIGSAW. Set VERBOSITY >= 1 for more output.
+#
+#   See also JIGSAW
 #
 
 def tripod(opts,tria):

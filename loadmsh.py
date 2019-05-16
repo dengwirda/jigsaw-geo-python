@@ -119,7 +119,8 @@
 #-----------------------------------------------------------
 #
 
-from msh_t import *
+from pathlib import Path
+from msh_t   import *
     
 def loadradii(mesh,file,ltag):
     """
@@ -128,14 +129,15 @@ def loadradii(mesh,file,ltag):
     """
     rtag = ltag[1].split(";")
 
-    if   (len(rtag) == +1):
-        mesh.radii.resize(+3)        
+    mesh.radii = \
+        np.empty (+3, dtype=np.float64)
+
+    if   (len(rtag) == +1):        
         mesh.radii[0]            = float(rtag[0])
         mesh.radii[1]            = float(rtag[0])
         mesh.radii[2]            = float(rtag[0])
 
-    elif (len(rtag) == +3):
-        mesh.radii.resize(+3)        
+    elif (len(rtag) == +3):        
         mesh.radii[0]            = float(rtag[0])
         mesh.radii[1]            = float(rtag[1])
         mesh.radii[2]            = float(rtag[2])
@@ -151,8 +153,8 @@ def loadpoint(mesh,file,ltag):
     lnum = int(ltag[1])
     
     d  = mesh.ndims
-    mesh.point.coord.resize(lnum,d)
-    mesh.point.IDtag.resize(lnum,1)
+
+    mesh.point = jigsaw_point_t(lnum,d)
     
     if   (d == +2):
         loadvert2(mesh,file)    
@@ -167,7 +169,7 @@ def loadvert2(mesh,file):
     LOADVERT2: load 2-dim. vertex pos. from file.
     
     """
-    lnum = np.size(mesh.point.coord,0)
+    lnum = np.size(mesh.point.coord, 0)
     next = +0
     
     while (lnum >= +1):
@@ -177,7 +179,7 @@ def loadvert2(mesh,file):
         mesh.point.coord[next,0] = float(dtag[0])
         mesh.point.coord[next,1] = float(dtag[1])
         
-        mesh.point.IDtag[next,0] = int  (dtag[2])
+        mesh.point.IDtag[next]   = int  (dtag[2])
 
         lnum -= +1
         next += +1
@@ -190,7 +192,7 @@ def loadvert3(mesh,file):
     LOADVERT3: load 3-dim. vertex pos. from file.
 
     """
-    lnum = np.size(mesh.point.coord,0)
+    lnum = np.size(mesh.point.coord, 0)
     next = +0
     
     while (lnum >= +1):
@@ -201,7 +203,7 @@ def loadvert3(mesh,file):
         mesh.point.coord[next,1] = float(dtag[1])
         mesh.point.coord[next,2] = float(dtag[3])
         
-        mesh.point.IDtag[next,0] = int  (dtag[2])
+        mesh.point.IDtag[next]   = int  (dtag[2])
 
         lnum -= +1
         next += +1
@@ -220,7 +222,8 @@ def loadpower(mesh,file,ltag):
     pnum = int(ptag[1])
     next = +0
     
-    mesh.power.resize(lnum,pnum)
+    mesh.power = np.empty( \
+       [lnum,pnum],dtype=np.float64)
     
     while (lnum >= +1):
         data = file.readline()
@@ -246,7 +249,8 @@ def loadvalue(mesh,file,ltag):
     vnum = int(vtag[1])
     next = +0
     
-    mesh.value.resize(lnum,vnum)
+    mesh.value = np.empty( \
+       [lnum,vnum],dtype=np.float64)
     
     while (lnum >= +1):
         data = file.readline()
@@ -269,9 +273,8 @@ def loadedge2(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.edge2.index.resize(lnum,2)
-    mesh.edge2.IDtag.resize(lnum,1)
-    
+    mesh.edge2 = jigsaw_cells_t(lnum,2)
+
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
@@ -279,7 +282,7 @@ def loadedge2(mesh,file,ltag):
         mesh.edge2.index[next,0] = int  (dtag[0])
         mesh.edge2.index[next,1] = int  (dtag[1])
         
-        mesh.edge2.IDtag[next,0] = int  (dtag[2])
+        mesh.edge2.IDtag[next]   = int  (dtag[2])
 
         lnum -= +1
         next += +1
@@ -295,8 +298,7 @@ def loadtria3(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.tria3.index.resize(lnum,3)
-    mesh.tria3.IDtag.resize(lnum,1)
+    mesh.tria3 = jigsaw_cells_t(lnum,3)
     
     while (lnum >= +1):
         data = file.readline()
@@ -306,7 +308,7 @@ def loadtria3(mesh,file,ltag):
         mesh.tria3.index[next,1] = int  (dtag[1])
         mesh.tria3.index[next,2] = int  (dtag[2])
         
-        mesh.tria3.IDtag[next,0] = int  (dtag[3])
+        mesh.tria3.IDtag[next]   = int  (dtag[3])
 
         lnum -= +1
         next += +1
@@ -322,8 +324,7 @@ def loadquad4(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.quad4.index.resize(lnum,4)
-    mesh.quad4.IDtag.resize(lnum,1)
+    mesh.quad4 = jigsaw_cells_t(lnum,4)
     
     while (lnum >= +1):
         data = file.readline()
@@ -334,7 +335,7 @@ def loadquad4(mesh,file,ltag):
         mesh.quad4.index[next,2] = int  (dtag[2])
         mesh.quad4.index[next,3] = int  (dtag[3])
         
-        mesh.quad4.IDtag[next,0] = int  (dtag[4])
+        mesh.quad4.IDtag[next]   = int  (dtag[4])
 
         lnum -= +1
         next += +1
@@ -350,8 +351,7 @@ def loadtria4(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.tria4.index.resize(lnum,4)
-    mesh.tria4.IDtag.resize(lnum,1)
+    mesh.tria4 = jigsaw_cells_t(lnum,4)
     
     while (lnum >= +1):
         data = file.readline()
@@ -362,7 +362,7 @@ def loadtria4(mesh,file,ltag):
         mesh.tria4.index[next,2] = int  (dtag[2])
         mesh.tria4.index[next,3] = int  (dtag[3])
         
-        mesh.tria4.IDtag[next,0] = int  (dtag[4])
+        mesh.tria4.IDtag[next]   = int  (dtag[4])
 
         lnum -= +1
         next += +1
@@ -378,8 +378,7 @@ def loadhexa8(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.hexa8.index.resize(lnum,8)
-    mesh.hexa8.IDtag.resize(lnum,1)
+    mesh.hexa8 = jigsaw_cells_t(lnum,8)
     
     while (lnum >= +1):
         data = file.readline()
@@ -394,7 +393,7 @@ def loadhexa8(mesh,file,ltag):
         mesh.hexa8.index[next,6] = int  (dtag[6])
         mesh.hexa8.index[next,7] = int  (dtag[7])
         
-        mesh.hexa8.IDtag[next,0] = int  (dtag[8])
+        mesh.hexa8.IDtag[next]   = int  (dtag[8])
 
         lnum -= +1
         next += +1
@@ -410,8 +409,7 @@ def loadpyra5(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.pyra5.index.resize(lnum,5)
-    mesh.pyra5.IDtag.resize(lnum,1)
+    mesh.pyra5 = jigsaw_cells_t(lnum,5)
     
     while (lnum >= +1):
         data = file.readline()
@@ -423,7 +421,7 @@ def loadpyra5(mesh,file,ltag):
         mesh.pyra5.index[next,3] = int  (dtag[3])
         mesh.pyra5.index[next,4] = int  (dtag[4])
         
-        mesh.pyra5.IDtag[next,0] = int  (dtag[5])
+        mesh.pyra5.IDtag[next]   = int  (dtag[5])
 
         lnum -= +1
         next += +1
@@ -439,8 +437,7 @@ def loadwedg6(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.wedg6.index.resize(lnum,6)
-    mesh.wedg6.IDtag.resize(lnum,1)
+    mesh.wedg6 = jigsaw_cells_t(lnum,6)
     
     while (lnum >= +1):
         data = file.readline()
@@ -453,7 +450,7 @@ def loadwedg6(mesh,file,ltag):
         mesh.wedg6.index[next,4] = int  (dtag[4])
         mesh.wedg6.index[next,5] = int  (dtag[5])
         
-        mesh.wedg6.IDtag[next,0] = int  (dtag[6])
+        mesh.wedg6.IDtag[next]   = int  (dtag[6])
 
         lnum -= +1
         next += +1
@@ -469,7 +466,7 @@ def loadbound(mesh,file,ltag):
     lnum = int(ltag[1])
     next = +0
     
-    mesh.bound.index.resize(lnum,3)
+    mesh.bound = jigsaw_index_t(lnum,3)
     
     while (lnum >= +1):
         data = file.readline()
@@ -511,7 +508,7 @@ def loadxgrid(mesh,file,ctag):
     lnum = int(ctag[1])
     next = +0
     
-    mesh.xgrid.resize(lnum)
+    mesh.xgrid = np.empty (lnum,dtype=np.float64)
     
     while (lnum >= +1):
         mesh.xgrid[next] = float(file.readline())
@@ -531,7 +528,7 @@ def loadygrid(mesh,file,ctag):
     lnum = int(ctag[1])
     next = +0
     
-    mesh.ygrid.resize(lnum)
+    mesh.ygrid = np.empty (lnum,dtype=np.float64)
     
     while (lnum >= +1):
         mesh.ygrid[next] = float(file.readline())
@@ -551,7 +548,7 @@ def loadzgrid(mesh,file,ctag):
     lnum = int(ctag[1])
     next = +0
     
-    mesh.zgrid.resize(lnum)
+    mesh.zgrid = np.empty (lnum,dtype=np.float64)
     
     while (lnum >= +1):
         mesh.zgrid[next] = float(file.readline())
@@ -669,7 +666,7 @@ def loadmsh(name,mesh):
     if (not isinstance(mesh,jigsaw_msh_t)):
         raise Exception("Incorrect type: MESH.")
 
-    with open(name,"r") as file:
+    with Path(name).open("r") as file:
         while (True):
         
     #--------------------------- get the next line from file    
