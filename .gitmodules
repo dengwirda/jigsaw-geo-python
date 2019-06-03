@@ -1,0 +1,3 @@
+[submodule "lib/jigsaw"]
+	path = lib/jigsaw
+	url = https://github.com/dengwirda/jigsaw.git
