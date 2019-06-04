@@ -8,7 +8,7 @@ from jigsawpy.cjigsaw.tests import test_1, \
 
 
 class CjigsawTestCase(unittest.TestCase):
-    # Checks that return status code is 0.
+
     def test_1(self):
         assert test_1.main(verbosity=0) == 0
 

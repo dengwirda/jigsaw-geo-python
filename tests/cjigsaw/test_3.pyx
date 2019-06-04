@@ -2,6 +2,9 @@
 """
 Use JIGSAW to mesh a simple geometry with user-defined
 mesh-spacing data defined on a "grid".
+
+This is a modified version of the original test_3 that includes
+plotting of the results.
 """
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_jig_t
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_msh_t
@@ -14,10 +17,11 @@ from jigsawpy.cjigsaw.jigsaw_msh_t cimport jigsaw_msh_t, \
 from jigsawpy.cjigsaw.jigsaw_const cimport JIGSAW_EUCLIDEAN_MESH, \
                                            JIGSAW_EUCLIDEAN_GRID, \
                                            JIGSAW_HFUN_ABSOLUTE
+import matplotlib.pyplot as plt
 
 cpdef int main(verbosity=+1):
     
-    cdef int _retv = 0
+    cdef int _retv = -1
     
     # -------------------------------- setup JIGSAW types
     cdef jigsaw_jig_t _jjig
@@ -125,21 +129,35 @@ cpdef int main(verbosity=+1):
                     NULL,      # empty init. data 
                     &_hfun,    # hfun. data
                     &_mesh)
- 
-    # -------------------------------- print JIGSAW tria. */
+
+    #-------------------------------- print JIGSAW tria. */
+
     print("\n VERT2: \n\n")
+    x = list()
+    y = list()
     for _ipos in range(_mesh._vert2._size):
-        print("%1.4f, %1.4f\n" % (
-                _mesh._vert2._data[_ipos]._ppos[0],
-                _mesh._vert2._data[_ipos]._ppos[0]))
+        _x = _mesh._vert2._data[_ipos]._ppos[0]
+        _y = _mesh._vert2._data[_ipos]._ppos[1]
+        print("%1.4f, %1.4f\n" % (_x, _y))
+        x.append(_x)
+        y.append(_y)
 
-
-    print("\n TRIA3: \n\n") ;
+    print("\n TRIA3: \n\n")
+    elements = list()
     for _ipos in range(_mesh._tria3._size):
-        print("%d, %d, %d\n" % (
-            _mesh._tria3._data[_ipos]._node[0],
-            _mesh._tria3._data[_ipos]._node[1],
-            _mesh._tria3._data[_ipos]._node[2]))
+        node0 = _mesh._tria3._data[_ipos]._node[0]
+        node1 = _mesh._tria3._data[_ipos]._node[1]
+        node2 = _mesh._tria3._data[_ipos]._node[2]
+        print("%d, %d, %d\n" % (node0, node1, node2))
+        elements.append((node0, node1, node2))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.triplot(x, y, elements)
+    ax.set_title('User-defined mesh-spacing data defined on a structured grid.')
+    fig.show()
+    plt.close(fig)
+    
 
     jigsaw_free_msh_t(&_mesh)
     
