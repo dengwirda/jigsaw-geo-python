@@ -1,8 +1,6 @@
 from jigsawpy.Jigsaw import Jigsaw
-from jigsawpy.JigsawConf import JigsawConf
 
-__all__ = ["Jigsaw",
-           "JigsawConf"]
+__all__ = ["Jigsaw"]
 
 try:
     import colored_traceback
