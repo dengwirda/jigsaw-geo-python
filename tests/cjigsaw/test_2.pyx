@@ -2,9 +2,6 @@
 """
 Use JIGSAW to mesh a simple geometry with user-defined
 mesh-spacing data defined on a "mesh".
-
-This is a modified version of the original test_2 that includes
-plotting of the results.
 """
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_jig_t
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_msh_t
@@ -17,7 +14,6 @@ from jigsawpy.cjigsaw.jigsaw_msh_t cimport jigsaw_msh_t, \
                                            jigsaw_TRIA3_t
 from jigsawpy.cjigsaw.jigsaw_const cimport JIGSAW_EUCLIDEAN_MESH, \
                                            JIGSAW_HFUN_ABSOLUTE
-import matplotlib.pyplot as plt
 
 cpdef int main(verbosity=+1):
 
@@ -70,9 +66,7 @@ cpdef int main(verbosity=+1):
         _edge2[i]._node = _node
         _edge2[i]._itag = _itag
 
-    _geom._flags = JIGSAW_EUCLIDEAN_MESH;
-    
-    # populate _geom with pointers to jigsaw objects.
+    _geom._flags = JIGSAW_EUCLIDEAN_MESH
     _geom._vert2._data = &_vert2[0]
     _geom._vert2._size = +4
     _geom._edge2._data = &_edge2[0]
@@ -115,11 +109,11 @@ cpdef int main(verbosity=+1):
     cdef double _hfun_value[5]
     _hfun_value[:] = [.2, .2, .2, .2, .5]
     _hfun._flags = JIGSAW_EUCLIDEAN_MESH
-    _hfun._vert2._data = &_hfun_vert2[0] ;
+    _hfun._vert2._data = &_hfun_vert2[0]
     _hfun._vert2._size = +5 ;
-    _hfun._tria3._data = &_hfun_tria3[0] ;
+    _hfun._tria3._data = &_hfun_tria3[0]
     _hfun._tria3._size = +4 ;
-    _hfun._value._data = &_hfun_value[0] ;
+    _hfun._value._data = &_hfun_value[0]
     _hfun._value._size = +5 ;
     
     # -------------------------------- build JIGSAW tria.
@@ -137,31 +131,18 @@ cpdef int main(verbosity=+1):
     #-------------------------------- print JIGSAW tria. */
 
     print("\n VERT2: \n\n")
-    x = list()
-    y = list()
     for _ipos in range(_mesh._vert2._size):
         _x = _mesh._vert2._data[_ipos]._ppos[0]
         _y = _mesh._vert2._data[_ipos]._ppos[1]
         print("%1.4f, %1.4f\n" % (_x, _y))
-        x.append(_x)
-        y.append(_y)
+
 
     print("\n TRIA3: \n\n")
-    elements = list()
     for _ipos in range(_mesh._tria3._size):
         node0 = _mesh._tria3._data[_ipos]._node[0]
         node1 = _mesh._tria3._data[_ipos]._node[1]
         node2 = _mesh._tria3._data[_ipos]._node[2]
         print("%d, %d, %d\n" % (node0, node1, node2))
-        elements.append((node0, node1, node2))
-
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.triplot(x, y, elements)
-    ax.set_title('User-defined mesh-spacing data defined on an unstructured mesh.')
-    plt.show()
-    plt.close(fig)
     
     jigsaw_free_msh_t(&_mesh)
     

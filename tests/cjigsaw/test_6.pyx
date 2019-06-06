@@ -2,9 +2,6 @@
 """
 Use JIGSAW to mesh a simple domain, but starting from
 user-defined initial-conditions.
-
-This is a modified version of the original test_6 that includes
-plotting of the results.
 """
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_jig_t
 from jigsawpy.cjigsaw.lib_jigsaw cimport jigsaw_init_msh_t
@@ -16,7 +13,6 @@ from jigsawpy.cjigsaw.jigsaw_msh_t cimport jigsaw_msh_t, \
                                            jigsaw_EDGE2_t
 from jigsawpy.cjigsaw.jigsaw_const cimport JIGSAW_EUCLIDEAN_MESH, \
                                            JIGSAW_HFUN_RELATIVE
-import matplotlib.pyplot as plt
 
 cpdef int main(verbosity=+1):
 
@@ -24,16 +20,16 @@ cpdef int main(verbosity=+1):
 
     # -------------------------------- setup JIGSAW types
     cdef jigsaw_jig_t _jjig
-    jigsaw_init_jig_t(&_jjig) ;
+    jigsaw_init_jig_t(&_jjig)
 
-    cdef jigsaw_msh_t _geom ;
-    jigsaw_init_msh_t(&_geom) ;
+    cdef jigsaw_msh_t _geom
+    jigsaw_init_msh_t(&_geom)
 
-    cdef jigsaw_msh_t _init ;
-    jigsaw_init_msh_t(&_init) ;
+    cdef jigsaw_msh_t _init
+    jigsaw_init_msh_t(&_init)
 
-    cdef jigsaw_msh_t _mesh ;
-    jigsaw_init_msh_t(&_mesh) ;
+    cdef jigsaw_msh_t _mesh
+    jigsaw_init_msh_t(&_mesh)
 
     # --------------------------------------------------------
     #  * JIGSAW's "mesh" is a piecewise linear complex:
@@ -124,30 +120,17 @@ cpdef int main(verbosity=+1):
 
     # -------------------------------- print JIGSAW tria. */
     print("\n VERT2: \n\n")
-    x = list()
-    y = list()
     for _ipos in range(_mesh._vert2._size):
         _x = _mesh._vert2._data[_ipos]._ppos[0]
         _y = _mesh._vert2._data[_ipos]._ppos[1]
         print("%1.4f, %1.4f\n" % (_x, _y))
-        x.append(_x)
-        y.append(_y)
 
     print("\n TRIA3: \n\n")
-    elements = list()
     for _ipos in range(_mesh._tria3._size):
         node0 = _mesh._tria3._data[_ipos]._node[0]
         node1 = _mesh._tria3._data[_ipos]._node[1]
         node2 = _mesh._tria3._data[_ipos]._node[2]
         print("%d, %d, %d\n" % (node0, node1, node2))
-        elements.append((node0, node1, node2))
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.triplot(x, y, elements)
-    ax.set_title('simple domain, but starting from user-defined initial-conditions.')
-    plt.show()
-    plt.close(fig)
 
     jigsaw_free_msh_t(&_mesh)
 
