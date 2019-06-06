@@ -45,7 +45,7 @@ setup(
     install_requires=['matplotlib'],
     entry_points={
         'console_scripts': [
-            'Jigsaw=jigsawpy.entrypoints.Jigsaw:main'
+            '_jigsaw=jigsawpy.entrypoints._jigsaw:main'
         ]
     }
 )
