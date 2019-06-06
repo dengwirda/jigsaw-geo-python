@@ -132,6 +132,7 @@ cpdef int main(verbosity=+1):
     ax.triplot(x, y, elements)
     ax.set_title('An example that uses TRIPOD to build a "restricted" DT.')
     fig.show()
+    plt.show()
     plt.close(fig)
 
     jigsaw_free_msh_t(&_tria)

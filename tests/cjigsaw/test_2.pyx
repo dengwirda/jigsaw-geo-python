@@ -160,7 +160,7 @@ cpdef int main(verbosity=+1):
     ax = fig.add_subplot(111)
     ax.triplot(x, y, elements)
     ax.set_title('User-defined mesh-spacing data defined on an unstructured mesh.')
-    fig.show()
+    plt.show()
     plt.close(fig)
     
     jigsaw_free_msh_t(&_mesh)

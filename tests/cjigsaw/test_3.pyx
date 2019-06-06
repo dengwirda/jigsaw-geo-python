@@ -155,9 +155,8 @@ cpdef int main(verbosity=+1):
     ax = fig.add_subplot(111)
     ax.triplot(x, y, elements)
     ax.set_title('User-defined mesh-spacing data defined on a structured grid.')
-    fig.show()
-    plt.close(fig)
-    
+    plt.show()
+    plt.close(fig)  
 
     jigsaw_free_msh_t(&_mesh)
     

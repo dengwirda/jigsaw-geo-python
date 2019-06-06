@@ -110,7 +110,7 @@ cpdef int main(verbosity=+1):
     ax = fig.add_subplot(111)
     ax.set_title('Use JIGSAW to mesh a square domain.')
     ax.triplot(x, y, elements)
-    fig.show()
+    plt.show()
     plt.close(fig)
 
     jigsaw_free_msh_t(&_mesh)

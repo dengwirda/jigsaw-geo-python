@@ -146,7 +146,7 @@ cpdef int main(verbosity=+1):
     ax = fig.add_subplot(111)
     ax.triplot(x, y, elements)
     ax.set_title('simple domain, but starting from user-defined initial-conditions.')
-    fig.show()
+    plt.show()
     plt.close(fig)
 
     jigsaw_free_msh_t(&_mesh)
