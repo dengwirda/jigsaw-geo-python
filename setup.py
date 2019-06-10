@@ -24,15 +24,6 @@ for path in glob('jigsawpy/*.pyx'):
                   libraries=['jigsaw'],
                   library_dirs=[LIBRARY_PATH]))
 
-for path in glob('jigsawpy/geom/*.pyx'):
-    name = path.split('/')[-1].split('.')[0]
-    extensions.append(
-        Extension("jigsawpy.geom.{}".format(name),
-                  [path, *headers],
-                  libraries=['jigsaw'],
-                  library_dirs=[LIBRARY_PATH]))
-
-
 if "test" in sys.argv:
     for path in glob('tests/cjigsaw/*.pyx'):
         name = path.split('/')[-1].split('.')[0]
