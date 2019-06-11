@@ -24,7 +24,6 @@ for path in glob('jigsawpy/*.pyx'):
                   libraries=['jigsaw'],
                   library_dirs=[LIBRARY_PATH]))
 
-
 if "test" in sys.argv:
     for path in glob('tests/cjigsaw/*.pyx'):
         name = path.split('/')[-1].split('.')[0]
@@ -45,7 +44,7 @@ setup(
     install_requires=['matplotlib'],
     entry_points={
         'console_scripts': [
-            'Jigsaw=jigsawpy.entrypoints.Jigsaw:main'
+            '_jigsaw=jigsawpy.entrypoints._jigsaw:main'
         ]
     }
 )
