@@ -1,5 +1,6 @@
 
-from msh_t import *
+import numpy as np
+from .msh_t import jigsaw_msh_t
 
 def certifyradii(data,stag):
 
@@ -9,10 +10,10 @@ def certifyradii(data,stag):
     if (data.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (data.dtype is not  np.float64 ):
-        raise Exception("Invalid "+stag+" data.")
+    if (data.dtype != jigsaw_msh_t.REALS_t):
+        raise Exception("Invalid "+stag+" type.")
 
-    if (np.any(not np.isfinite(data)) ):
+    if (not np.isfinite(data).all()):
         raise Exception("Invalid "+stag+" data.")
 
     if (np.any(data <= 0.)):
@@ -21,36 +22,18 @@ def certifyradii(data,stag):
     return
 
 
-def certifypoint(data,stag):
+def certifypoint(data,stag,KIND):
 
-    if (np.size(data.coord,0) \
-    !=  np.size(data.IDtag,0)):
+    if (data.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (data.coord.ndim != +2):
-        raise Exception("Invalid "+stag+" size.")
+    if (data.dtype != KIND):
+        raise Exception("Invalid "+stag+" type.")
 
-    if (data.IDtag.ndim != +1):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (np.size(data.coord,1) \
-            not in (+2, +3) ):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (data.coord.dtype \
-            is not  np.float64 ):
+    if (not np.isfinite(data["coord"]).all()):
         raise Exception("Invalid "+stag+" data.")
 
-    if (data.IDtag.dtype \
-            is not  np.  int32 ):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (np.any(not np.isfinite( \
-            data.coord)) ):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (np.any(not np.isfinite( \
-            data.IDtag)) ):
+    if (not np.isfinite(data["IDtag"]).all()):
         raise Exception("Invalid "+stag+" data.")
 
     return
@@ -61,66 +44,53 @@ def certifyvalue(vals,stag,nval):
     if (vals.ndim != +2):
         raise Exception("Invalid "+stag+" size.")
 
-    if (vals.dtype is not  np.float64 ):
-        raise Exception("Invalid "+stag+" data.")
+    if (vals.dtype != jigsaw_msh_t.REALS_t):
+        raise Exception("Invalid "+stag+" type.")
 
-    if (np.any(not np.isfinite(vals)) ):
-        raise Exception("Invalid "+stag+" data.")
-
-    return
-
-
-def certifycells(cell,stag,nidx):
-
-    if (np.size(cell.index,0) \
-    !=  np.size(cell.IDtag,0)):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (np.size(cell.index,1) != nidx):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (cell.index.ndim != +2):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (cell.IDtag.ndim != +1):
-        raise Exception("Invalid "+stag+" size.")
-
-    if (cell.index.dtype \
-            is not  np.  int32 ):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (cell.IDtag.dtype \
-            is not  np.  int32 ):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (np.any(not np.isfinite( \
-            cell.index)) ):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (np.any(cell.index < +0)):
-        raise Exception("Invalid "+stag+" data.")
-
-    if (np.any(not np.isfinite( \
-            cell.IDtag)) ):
+    if (not np.isfinite(data).all()):
         raise Exception("Invalid "+stag+" data.")
 
     return
 
 
-def certifyindex(data,stag,nidx):
+def certifycells(cell,stag,KIND):
 
-    if (np.size(data.index,1) != nidx):
+    if (cell.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (data.index.dtype \
-            is not  np.  int32 ):
+    if (cell.dtype != KIND):
+        raise Exception("Invalid "+stag+" type.")
+
+    if (not np.isfinite(cell["index"]).all()):
         raise Exception("Invalid "+stag+" data.")
 
-    if (np.any(not np.isfinite( \
-            data.index)) ):
+    if (np.any(cell["index"] < +0)):
         raise Exception("Invalid "+stag+" data.")
 
-    if (np.any(data.index < +0)):
+    if (not np.isfinite(cell["IDtag"]).all()):
+        raise Exception("Invalid "+stag+" data.")
+
+    return
+
+
+def certifyindex(data,stag,KIND):
+
+    if (data.ndim != +1):
+        raise Exception("Invalid "+stag+" size.")
+
+    if (cell.dtype != KIND):
+        raise Exception("Invalid "+stag+" type.")
+
+    if (not np.isfinite(cell["IDtag"]).all()):
+        raise Exception("Invalid "+stag+" data.")
+
+    if (not np.isfinite(cell["index"]).all()):
+        raise Exception("Invalid "+stag+" data.")
+
+    if (not np.isfinite(cell["cells"]).all()):
+        raise Exception("Invalid "+stag+" data.")
+
+    if (np.any(data < +0)):
         raise Exception("Invalid "+stag+" data.")
 
     return
@@ -133,11 +103,17 @@ def certifymesht(mesh):
 
         certifyradii(mesh.radii,"MESH.RADII")
 
-    if (mesh.point is not None and \
-       (mesh.point.coord.size != +0 or  \
-        mesh.point.IDtag.size != +0)):
+    if (mesh.vert2 is not None and \
+        mesh.vert2.size != +0 ):
 
-        certifypoint(mesh.point,"MESH.POINT")
+        certifypoint(mesh.vert2,"MESH.VERT2", \
+            jigsaw_msh_t.VERT2_t)
+
+    if (mesh.vert3 is not None and \
+        mesh.vert3.size != +0 ):
+
+        certifypoint(mesh.vert3,"MESH.VERT3", \
+            jigsaw_msh_t.VERT3_t)
 
     if (mesh.power is not None and \
         mesh.power.size != +0 ):
@@ -150,51 +126,52 @@ def certifymesht(mesh):
         certifyvalue(mesh.value,"MESH.VALUE")
 
     if (mesh.edge2 is not None and \
-       (mesh.edge2.index.size != +0 or  \
-        mesh.edge2.IDtag.size != +0)):
+        mesh.edge2.size != +0 ):
 
-        certifycells(mesh.edge2,"MESH.EDGE2",2)
+        certifycells(mesh.edge2,"MESH.EDGE2", \
+            jigsaw_msh_t.EDGE2_t)
 
     if (mesh.tria3 is not None and \
-       (mesh.tria3.index.size != +0 or  \
-        mesh.tria3.IDtag.size != +0)):
+        mesh.tria3.size != +0 ):
 
-        certifycells(mesh.tria3,"MESH.TRIA3",3)
+        certifycells(mesh.tria3,"MESH.TRIA3", \
+            jigsaw_msh_t.TRIA3_t)
 
     if (mesh.quad4 is not None and \
-       (mesh.quad4.index.size != +0 or  \
-        mesh.quad4.IDtag.size != +0)):
+        mesh.quad4.size != +0 ):
 
-        certifycells(mesh.quad4,"MESH.QUAD4",4)
+        certifycells(mesh.quad4,"MESH.QUAD4", \
+            jigsaw_msh_t.QUAD4_t)
 
     if (mesh.tria4 is not None and \
-       (mesh.tria4.index.size != +0 or  \
-        mesh.tria4.IDtag.size != +0)):
+        mesh.tria4.size != +0 ):
 
-        certifycells(mesh.tria4,"MESH.TRIA4",4)
+        certifycells(mesh.tria4,"MESH.TRIA4", \
+            jigsaw_msh_t.TRIA4_t)
 
     if (mesh.hexa8 is not None and \
-       (mesh.hexa8.index.size != +0 or  \
-        mesh.hexa8.IDtag.size != +0)):
+        mesh.hexa8.size != +0 ):
 
-        certifycells(mesh.hexa8,"MESH.HEXA8",8)
+        certifycells(mesh.hexa8,"MESH.HEXA8", \
+            jigsaw_msh_t.HEXA8_t)
 
     if (mesh.wedg6 is not None and \
-       (mesh.wedg6.index.size != +0 or  \
-        mesh.wedg6.IDtag.size != +0)):
+        mesh.wedg6.size != +0 ):
 
-        certifycells(mesh.wedg6,"MESH.WEDG6",6)
+        certifycells(mesh.wedg6,"MESH.WEDG6", \
+            jigsaw_msh_t.WEDG6_t)
 
     if (mesh.pyra5 is not None and \
-       (mesh.pyra5.index.size != +0 or  \
-        mesh.pyra5.IDtag.size != +0)):
+        mesh.pyra5.size != +0 ):
 
-        certifycells(mesh.pyra5,"MESH.PYRA5",5)
+        certifycells(mesh.pyra5,"MESH.PYRA5", \
+            jigsaw_msh_t.PYRA5_t)
 
     if (mesh.bound is not None and \
-        mesh.bound.index.size != +0 ):
+        mesh.bound.size != +0 ):
 
-        certifyindex(mesh.bound,"MESH.BOUND",3)
+        certifyindex(mesh.bound,"MESH.BOUND", \
+            jigsaw_msh_t.BOUND_t)
 
     return
 
@@ -204,16 +181,16 @@ def certifycoord(data,stag):
     if (data.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (data.dtype is not  np.float64 ):
-        raise Exception("Invalid "+stag+" data.")
+    if (data.dtype != jigsaw_msh_t.REALS_t):
+        raise Exception("Invalid "+stag+" type.")
 
-    if (np.any(not np.isfinite(data)) ):
+    if (not np.isfinite(data).all()):
         raise Exception("Invalid "+stag+" data.")
 
     return
 
 
-def certifyndmat(data,stag,dims):
+def certifyNDmat(data,stag,dims):
 
     if (data.ndim != len(dims)):
         raise Exception("Invalid "+stag+" size.")
@@ -221,10 +198,10 @@ def certifyndmat(data,stag,dims):
     if (data.size != np.prod(dims)):
         raise Exception("Invalid "+stag+" size.")
 
-    if (data.dtype is not  np.float64 ):
-        raise Exception("Invalid "+stag+" data.")
+    if (data.dtype != jigsaw_msh_t.REALS_t):
+        raise Exception("Invalid "+stag+" type.")
 
-    if (np.any(not np.isfinite(data)) ):
+    if (not np.isfinite(data).all()):
         raise Exception("Invalid "+stag+" data.")
 
     return
@@ -263,13 +240,19 @@ def certifygridt(mesh):
     if (mesh.value is not None and \
         mesh.value.size != +0 ):
 
-        certifyndmat(mesh.value,"MESH.VALUE", \
+        certifyNDmat(mesh.value,"MESH.VALUE", \
                      dims)
 
     return
 
 
 def certify(mesh):
+    """
+    CERTIFY: certify layout for a JIGSAW MSH object.
+    
+    """
+
+    if (mesh is None): return
 
     if (not isinstance (mesh,jigsaw_msh_t)):
         raise Exception("Invalid MESH structure.")
