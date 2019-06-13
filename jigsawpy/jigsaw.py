@@ -5,11 +5,11 @@ import shutil
 
 from  pathlib import Path
 
-from .jig_t import jigsaw_jig_t
-from .msh_t import jigsaw_msh_t
+from jigsawpy.jig_t import jigsaw_jig_t
+from jigsawpy.msh_t import jigsaw_msh_t
 
-from .loadmsh import loadmsh
-from .savejig import savejig
+from jigsawpy.loadmsh import loadmsh
+from jigsawpy.savejig import savejig
 
 def jigsaw(opts,mesh=None):
     """

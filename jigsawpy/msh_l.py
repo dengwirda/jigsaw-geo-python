@@ -1,7 +1,7 @@
 
 import ctypes as ct
 
-from .def_l import indx_t, real_t
+from jigsawpy.def_l import indx_t, real_t
 
 #------------------------------------------- POINT struct.'s
 

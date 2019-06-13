@@ -1,8 +1,8 @@
 
 import numpy as np
-from  pathlib import Path
-from .msh_t   import jigsaw_msh_t
-from .certify import certify
+from pathlib import Path
+from jigsawpy.msh_t import jigsaw_msh_t
+from jigsawpy.certify import certify
 
 def saveradii(mesh,file):
     """

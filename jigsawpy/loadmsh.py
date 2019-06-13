@@ -1,7 +1,7 @@
 
 import numpy as np
 from pathlib import Path
-from  .msh_t import jigsaw_msh_t
+from jigsawpy.msh_t import jigsaw_msh_t
 
 def loadradii(mesh,file,ltag):
     """

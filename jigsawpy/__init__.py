@@ -50,45 +50,42 @@
 ------------------------------------------------------------
  """
 
-from .msh_t import jigsaw_msh_t
-from .jig_t import jigsaw_jig_t
+from jigsawpy.msh_t import jigsaw_msh_t
+from jigsawpy.jig_t import jigsaw_jig_t
 
-from .def_l import *
+from jigsawpy.def_l import *
 
-from .loadmsh import loadmsh
-from .savemsh import savemsh
-from .loadjig import loadjig
-from .savejig import savejig
+from jigsawpy.loadmsh import loadmsh
+from jigsawpy.savemsh import savemsh
+from jigsawpy.loadjig import loadjig
+from jigsawpy.savejig import savejig
 
-from .certify import certify
+from jigsawpy.certify import certify
+from jigsawpy import jigsaw, libsaw
 
 class cmd :
 #--------------------------------- expose cmd-line interface
     def jigsaw(opts,mesh=None) :
-        from  .jigsaw import jigsaw        
         
-        return jigsaw(opts,mesh)
+        return jigsaw.jigsaw(opts,mesh)
 
     def tripod(opts,tria=None) :
-        from  .jigsaw import tripod        
         
-        return tripod(opts,tria)
+        return jigsaw.tripod(opts,tria)
 
 class lib :
 #--------------------------------- expose API-lib. interface
     def jigsaw(opts,geom,mesh,
                init=None,
                hfun=None) :
-        from  .libsaw import jigsaw        
         
-        return jigsaw(
+        return libsaw.jigsaw(
             opts,geom,mesh,init,hfun)
 
     def tripod(opts,init,tria,
                geom=None) :
-        from  .libsaw import tripod        
         
-        return tripod(
+        return libsaw.tripod(
             opts,init,tria,geom     )
 
 
