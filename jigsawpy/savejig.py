@@ -1,6 +1,6 @@
   
 from pathlib import Path
-from .jig_t  import jigsaw_jig_t
+from jigsawpy.jig_t  import jigsaw_jig_t
 
 def savechar(file,sval,stag):
 

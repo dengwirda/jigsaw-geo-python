@@ -5,26 +5,18 @@ import os
 
 from pathlib import Path
 
-from .def_l import *
+from jigsawpy.def_l import *
 
-from .msh_l import libsaw_VERT2_t
-from .msh_l import libsaw_VERT3_t
-from .msh_l import libsaw_EDGE2_t
-from .msh_l import libsaw_TRIA3_t
-from .msh_l import libsaw_QUAD4_t
-from .msh_l import libsaw_TRIA4_t
-from .msh_l import libsaw_HEXA8_t
-from .msh_l import libsaw_WEDG6_t
-from .msh_l import libsaw_PYRA5_t
-from .msh_l import libsaw_BOUND_t
-from .msh_l import libsaw_msh_t
+from jigsawpy.msh_l import libsaw_VERT2_t, libsaw_VERT3_t, libsaw_EDGE2_t, \
+    libsaw_TRIA3_t, libsaw_QUAD4_t, libsaw_TRIA4_t, libsaw_HEXA8_t, \
+    libsaw_WEDG6_t, libsaw_PYRA5_t, libsaw_BOUND_t, libsaw_msh_t
 
-from .jig_l import libsaw_jig_t
+from jigsawpy.jig_l import libsaw_jig_t
 
-from .certify import certify
+from jigsawpy.certify import certify
 
-from .jig_t import jigsaw_jig_t
-from .msh_t import jigsaw_msh_t
+from jigsawpy.jig_t import jigsaw_jig_t
+from jigsawpy.msh_t import jigsaw_msh_t
 
 #---------------------------- Try to find/load JIGSAW's API.
 

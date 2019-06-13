@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 from timeit import default_timer as timer
 from pathlib import Path
@@ -66,5 +67,6 @@ def example():
     
     return
 
-
+if __name__=='__main__':
+    example()
 
