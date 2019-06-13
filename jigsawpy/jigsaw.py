@@ -1,6 +1,7 @@
 
 import subprocess
 import os
+import shutil
 
 from  pathlib import Path
 
@@ -13,15 +14,15 @@ from .savejig import savejig
 def jigsaw(opts,mesh=None):
     """
     JIGSAW cmd-line interface to JIGSAW.
- 
+
     JIGSAW(OPTS,MESH=None)
- 
-    Call the JIGSAW mesh generator using the config. options 
-    specified in the OPTS structure. 
- 
+
+    Call the JIGSAW mesh generator using the config. options
+    specified in the OPTS structure.
+
     OPTS is a user-defined set of meshing options. See JIG_t
     for details.
- 
+
     """
     jexename = Path()
 
@@ -53,16 +54,8 @@ def jigsaw(opts,mesh=None):
             jexename  = Path ()
 
     if (jexename == Path()):
-#---------------------------- search machine path for binary        
-        if   (os.name ==    "nt"):
-            jexename  = Path ( "jigsaw.exe" )
-
-        elif (os.name == "posix"):
-            jexename  = Path ( "jigsaw" )
-
-        else:
-            jexename  = Path ()
-
+#---------------------------- search machine path for binary
+        jexename = Path(shutil.which("jigsaw"))
 
     if (jexename != Path()):
 #---------------------------- call JIGSAW and capture output
@@ -81,15 +74,15 @@ def jigsaw(opts,mesh=None):
 def tripod(opts,tria=None):
     """
     TRIPOD cmd-line interface to TRIPOD.
- 
+
     TRIPOD(OPTS,TRIA=None)
- 
-    Call the TRIPOD tessellation util. using the config. opt 
-    specified in the OPTS structure. 
- 
+
+    Call the TRIPOD tessellation util. using the config. opt
+    specified in the OPTS structure.
+
     OPTS is a user-defined set of meshing options. See JIG_t
     for details.
- 
+
     """
     jexename = Path()
 
@@ -121,16 +114,8 @@ def tripod(opts,tria=None):
             jexename  = Path ()
 
     if (jexename == Path()):
-#---------------------------- search machine path for binary        
-        if   (os.name ==    "nt"):
-            jexename  = Path ( "tripod.exe" )
-
-        elif (os.name == "posix"):
-            jexename  = Path ( "tripod" )
-
-        else:
-            jexename  = Path ()
-
+#---------------------------- search machine path for binary
+        jexename = Path(shutil.which("tripod"))
 
     if (jexename != Path()):
 #---------------------------- call JIGSAW and capture output
