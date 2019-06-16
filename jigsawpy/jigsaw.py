@@ -1,6 +1,6 @@
 
 import subprocess
-import os
+import os,inspect
 import shutil
 
 from  pathlib import Path
@@ -37,15 +37,25 @@ def jigsaw(opts,mesh=None):
 
     if (jexename == Path()):
 #---------------------------- set-up path for "local" binary
-        filepath = Path().absolute()
 
-        if   (os.name ==    "nt"):
-            jexename  = filepath \
-          / "jigsaw" / "bin" / "jigsaw.exe"
+#   stackoverflow.com/questions/2632199/
+#       how-do-i-get-the-
+#           path-of-the-current-executed-file-in-python
+    filename = \
+        inspect.getsourcefile(lambda:None)
 
-        elif (os.name == "posix"):
-            jexename  = filepath \
-          / "jigsaw" / "bin" / "jigsaw"
+    filepath = Path(os.path.dirname(
+        os.path.abspath(filename))).parent
+    
+    if   (os.name ==    "nt"):
+        jexename  = \
+            filepath / "c_lib" \
+      / "jigsaw" / "bin" / "jigsaw.exe"
+
+    elif (os.name == "posix"):
+        jexename  = \
+            filepath / "c_lib" \
+      / "jigsaw" / "bin" / "jigsaw"
 
         else:
             jexename  = Path ()
@@ -97,15 +107,25 @@ def tripod(opts,tria=None):
 
     if (jexename == Path()):
 #---------------------------- set-up path for "local" binary
-        filepath = Path().absolute()
+        
+#   stackoverflow.com/questions/2632199/
+#       how-do-i-get-the-
+#           path-of-the-current-executed-file-in-python
+    filename = \
+        inspect.getsourcefile(lambda:None)
 
-        if   (os.name ==    "nt"):
-            jexename  = filepath \
-          / "jigsaw" / "bin" / "tripod.exe"
+    filepath = Path(os.path.dirname(
+        os.path.abspath(filename))).parent
+    
+    if   (os.name ==    "nt"):
+        jexename  = \
+            filepath / "c_lib" \
+      / "jigsaw" / "bin" / "tripod.exe"
 
-        elif (os.name == "posix"):
-            jexename  = filepath \
-          / "jigsaw" / "bin" / "tripod"
+    elif (os.name == "posix"):
+        jexename  = \
+            filepath / "c_lib" \
+      / "jigsaw" / "bin" / "tripod"
 
         else:
             jexename  = Path ()

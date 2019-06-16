@@ -2,6 +2,18 @@
 import numpy as np
 from jigsawpy.msh_t import jigsaw_msh_t
 
+def certifyarray(data,stag):
+
+    if (data is not None):
+        if (isinstance(data,np.ndarray)):
+
+            return data.size >= +1
+
+        raise Exception("Invalid "+stag+" type.")
+
+    return False
+
+
 def certifyradii(data,stag):
 
     if (data.size != +3):
@@ -78,19 +90,22 @@ def certifyindex(data,stag,KIND):
     if (data.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (cell.dtype != KIND):
+    if (data.dtype != KIND):
         raise Exception("Invalid "+stag+" type.")
 
-    if (not np.isfinite(cell["IDtag"]).all()):
+    if (not np.isfinite(data["IDtag"]).all()):
         raise Exception("Invalid "+stag+" data.")
 
-    if (not np.isfinite(cell["index"]).all()):
+    if (not np.isfinite(data["index"]).all()):
         raise Exception("Invalid "+stag+" data.")
 
-    if (not np.isfinite(cell["cells"]).all()):
+    if (np.any(data["index"] < +0)):
         raise Exception("Invalid "+stag+" data.")
 
-    if (np.any(data < +0)):
+    if (not np.isfinite(data["cells"]).all()):
+        raise Exception("Invalid "+stag+" data.")
+
+    if (np.any(data["cells"] < +0)):
         raise Exception("Invalid "+stag+" data.")
 
     return
@@ -98,77 +113,64 @@ def certifyindex(data,stag,KIND):
 
 def certifymesht(mesh):
 
-    if (mesh.radii is not None and \
-        mesh.radii.size != +0 ):
+    if (certifyarray(mesh.radii,"MESH.RADII")):
 
         certifyradii(mesh.radii,"MESH.RADII")
 
-    if (mesh.vert2 is not None and \
-        mesh.vert2.size != +0 ):
+    if (certifyarray(mesh.vert2,"MESH.VERT2")):
 
         certifypoint(mesh.vert2,"MESH.VERT2", \
             jigsaw_msh_t.VERT2_t)
 
-    if (mesh.vert3 is not None and \
-        mesh.vert3.size != +0 ):
+    if (certifyarray(mesh.vert3,"MESH.VERT3")):
 
         certifypoint(mesh.vert3,"MESH.VERT3", \
             jigsaw_msh_t.VERT3_t)
 
-    if (mesh.power is not None and \
-        mesh.power.size != +0 ):
+    if (certifyarray(mesh.power,"MESH.POWER")):
 
         certifyvalue(mesh.power,"MESH.POWER")
 
-    if (mesh.value is not None and \
-        mesh.value.size != +0 ):
+    if (certifyarray(mesh.value,"MESH.VALUE")):
 
         certifyvalue(mesh.value,"MESH.VALUE")
 
-    if (mesh.edge2 is not None and \
-        mesh.edge2.size != +0 ):
+    if (certifyarray(mesh.edge2,"MESH.EDGE2")):
 
         certifycells(mesh.edge2,"MESH.EDGE2", \
             jigsaw_msh_t.EDGE2_t)
 
-    if (mesh.tria3 is not None and \
-        mesh.tria3.size != +0 ):
+    if (certifyarray(mesh.tria3,"MESH.TRIA3")):
 
         certifycells(mesh.tria3,"MESH.TRIA3", \
             jigsaw_msh_t.TRIA3_t)
 
-    if (mesh.quad4 is not None and \
-        mesh.quad4.size != +0 ):
+    if (certifyarray(mesh.quad4,"MESH.QUAD4")):
 
         certifycells(mesh.quad4,"MESH.QUAD4", \
             jigsaw_msh_t.QUAD4_t)
 
-    if (mesh.tria4 is not None and \
-        mesh.tria4.size != +0 ):
+    if (certifyarray(mesh.tria4,"MESH.TRIA4")):
 
         certifycells(mesh.tria4,"MESH.TRIA4", \
             jigsaw_msh_t.TRIA4_t)
 
-    if (mesh.hexa8 is not None and \
-        mesh.hexa8.size != +0 ):
+    if (certifyarray(mesh.hexa8,"MESH.HEXA8")):
 
         certifycells(mesh.hexa8,"MESH.HEXA8", \
             jigsaw_msh_t.HEXA8_t)
 
-    if (mesh.wedg6 is not None and \
-        mesh.wedg6.size != +0 ):
+    if (certifyarray(mesh.wedg6,"MESH.WEDG6")):
 
         certifycells(mesh.wedg6,"MESH.WEDG6", \
             jigsaw_msh_t.WEDG6_t)
 
-    if (mesh.pyra5 is not None and \
-        mesh.pyra5.size != +0 ):
+    if (certifyarray(mesh.pyra5,"MESH.PYRA5")):
 
         certifycells(mesh.pyra5,"MESH.PYRA5", \
             jigsaw_msh_t.PYRA5_t)
 
-    if (mesh.bound is not None and \
-        mesh.bound.size != +0 ):
+    if (certifyarray(mesh.bound,"MESH.BOUND")):
 
         certifyindex(mesh.bound,"MESH.BOUND", \
             jigsaw_msh_t.BOUND_t)
@@ -211,34 +213,29 @@ def certifygridt(mesh):
 
     dims = []
 
-    if (mesh.radii is not None and \
-        mesh.radii.size != +0 ):
+    if (certifyarray(mesh.radii,"MESH.RADII")):
 
         certifyradii(mesh.radii,"MESH.RADII")
 
-    if (mesh.xgrid is not None and \
-        mesh.xgrid.size != +0 ):
+    if (certifyarray(mesh.xgrid,"MESH.XGRID")):
 
         dims +=[mesh.xgrid.size]
 
         certifycoord(mesh.xgrid,"MESH.XGRID")
 
-    if (mesh.ygrid is not None and \
-        mesh.ygrid.size != +0 ):
+    if (certifyarray(mesh.ygrid,"MESH.YGRID")):
 
         dims +=[mesh.ygrid.size]
 
         certifycoord(mesh.ygrid,"MESH.YGRID")
 
-    if (mesh.zgrid is not None and \
-        mesh.zgrid.size != +0 ):
+    if (certifyarray(mesh.zgrid,"MESH.ZGRID")):
 
         dims +=[mesh.zgrid.size]
 
         certifycoord(mesh.zgrid,"MESH.ZGRID")
 
-    if (mesh.value is not None and \
-        mesh.value.size != +0 ):
+    if (certifyarray(mesh.value,"MESH.VALUE")):
 
         certifyNDmat(mesh.value,"MESH.VALUE", \
                      dims)

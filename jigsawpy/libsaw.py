@@ -1,20 +1,24 @@
 
 import ctypes as ct
 import numpy  as np
-import os
+import os, inspect
 
 from pathlib import Path
 
-from jigsawpy.def_l import *
+from jigsawpy.def_t import indx_t, real_t
 
-from jigsawpy.msh_l import libsaw_VERT2_t, libsaw_VERT3_t, libsaw_EDGE2_t, \
-    libsaw_TRIA3_t, libsaw_QUAD4_t, libsaw_TRIA4_t, libsaw_HEXA8_t, \
-    libsaw_WEDG6_t, libsaw_PYRA5_t, libsaw_BOUND_t, libsaw_msh_t
+from jigsawpy.msh_l import libsaw_VERT2_t, libsaw_VERT3_t, \
+    libsaw_EDGE2_t, libsaw_TRIA3_t, \
+    libsaw_QUAD4_t, libsaw_TRIA4_t, \
+    libsaw_HEXA8_t, libsaw_WEDG6_t, \
+    libsaw_PYRA5_t, libsaw_BOUND_t
 
+from jigsawpy.msh_l import libsaw_msh_t
 from jigsawpy.jig_l import libsaw_jig_t
 
 from jigsawpy.certify import certify
 
+from jigsawpy.def_t import jigsaw_def_t
 from jigsawpy.jig_t import jigsaw_jig_t
 from jigsawpy.msh_t import jigsaw_msh_t
 
@@ -24,14 +28,24 @@ jlibname = Path()
 
 if (jlibname == Path()):
 #---------------------------- set-up path for "local" binary
-    filepath = Path().absolute()
 
+#   stackoverflow.com/questions/2632199/
+#       how-do-i-get-the-
+#           path-of-the-current-executed-file-in-python
+    filename = \
+        inspect.getsourcefile(lambda:None)
+
+    filepath = Path(os.path.dirname(
+        os.path.abspath(filename))).parent
+    
     if   (os.name ==    "nt"):
-        jlibname  = filepath \
+        jlibname  = \
+            filepath / "c_lib" \
       / "jigsaw" / "lib" / "libjigsaw.dll"
 
     elif (os.name == "posix"):
-        jlibname  = filepath \
+        jlibname  = \
+            filepath / "c_lib" \
       / "jigsaw" / "lib" / "libjigsaw.so"
 
     else:
@@ -41,7 +55,7 @@ if (jlibname == Path()):
         jlibname  = Path ()
 
 if (jlibname == Path()):
-#---------------------------- search machine path for binary        
+#---------------------------- search machine path for binary
     if   (os.name ==    "nt"):
         jlibname  = Path ( "libjigsaw.dll" )
 
@@ -105,11 +119,11 @@ def put_jig_t(jigt,jigl):
     if (isinstance(jigt.hfun_scal,str  )):
         if (jigt.hfun_scal.lower()=="absolute"):
             jigl.hfun_scal = \
-                JIGSAW_HFUN_ABSOLUTE
+        jigsaw_def_t.JIGSAW_HFUN_ABSOLUTE
 
         if (jigt.hfun_scal.lower()=="relative"):
             jigl.hfun_scal = \
-                JIGSAW_HFUN_RELATIVE
+        jigsaw_def_t.JIGSAW_HFUN_RELATIVE
 
     elif (jigt.hfun_scal is not None):
         raise Exception("HFUN-SCAL type")
@@ -128,11 +142,11 @@ def put_jig_t(jigt,jigl):
     if (isinstance(jigt.bnds_kern,str  )):
         if (jigt.bnds_kern.lower()=="triacell"):
             jigl.bnds_kern = \
-                JIGSAW_BNDS_TRIACELL
+        jigsaw_def_t.JIGSAW_BNDS_TRIACELL
 
         if (jigt.bnds_kern.lower()=="dualcell"):
             jigl.bnds_kern = \
-                JIGSAW_BNDS_DUALCELL
+        jigsaw_def_t.JIGSAW_BNDS_DUALCELL
 
     elif (jigt.bnds_kern is not None):
         raise Exception("BNDS-KERN type")
@@ -145,11 +159,11 @@ def put_jig_t(jigt,jigl):
     if (isinstance(jigt.mesh_kern,str  )):
         if (jigt.mesh_kern.lower()=="delfront"):
             jigl.mesh_kern = \
-                JIGSAW_KERN_DELFRONT
+        jigsaw_def_t.JIGSAW_KERN_DELFRONT
 
         if (jigt.mesh_kern.lower()=="delaunay"):
             jigl.mesh_kern = \
-                JIGSAW_KERN_DELAUNAY
+        jigsaw_def_t.JIGSAW_KERN_DELAUNAY
 
     elif (jigt.mesh_kern is not None):
         raise Exception("MESH-KERN type")
@@ -236,12 +250,12 @@ def put_jig_t(jigt,jigl):
         raise Exception("OPTM-ITER type")
 
     if (isinstance(jigt.optm_qtol,float)):
-        jigl.optm_qtol = indx_t(jigt.optm_qtol)
+        jigl.optm_qtol = real_t(jigt.optm_qtol)
     elif (jigt.optm_qtol is not None):
         raise Exception("OPTM-QTOL type")
 
     if (isinstance(jigt.optm_qlim,float)):
-        jigl.optm_qlim = indx_t(jigt.optm_qlim)
+        jigl.optm_qlim = real_t(jigt.optm_qlim)
     elif (jigt.optm_qlim is not None):
         raise Exception("OPTM-QLIM type")
 
@@ -268,6 +282,13 @@ def put_jig_t(jigt,jigl):
     return
 
 
+def put_ptr_t(data,kind):
+    
+    #--------------------------------- helper to assign ptrs
+    return np.asfortranarray(
+        data).ctypes.data_as( ct.POINTER(kind))
+
+
 def put_msh_t(msht,mshl):
     """
     PUT-MSH_t: Assign ptrs from python-to-ctypes objects.
@@ -280,152 +301,150 @@ def put_msh_t(msht,mshl):
     if (msht.mshID is not None):
     #--------------------------------- assign mshID variable
         if (msht.mshID.lower() == \
-                      "euclidean-mesh"):
+                        "euclidean-mesh"):
             mshl.flags = \
-                JIGSAW_EUCLIDEAN_MESH
+                jigsaw_def_t. \
+                    JIGSAW_EUCLIDEAN_MESH
         
         if (msht.mshID.lower() == \
-                      "euclidean-grid"):
+                        "euclidean-grid"):
             mshl.flags = \
-                JIGSAW_EUCLIDEAN_GRID
+                jigsaw_def_t. \
+                    JIGSAW_EUCLIDEAN_GRID
 
         if (msht.mshID.lower() == \
-                      "ellipsoid-mesh"):
+                        "ellipsoid-mesh"):
             mshl.flags = \
-                JIGSAW_ELLIPSOID_MESH
+                jigsaw_def_t. \
+                    JIGSAW_ELLIPSOID_MESH
 
         if (msht.mshID.lower() == \
-                      "ellipsoid-grid"):
+                        "ellipsoid-grid"):
             mshl.flags = \
-                JIGSAW_ELLIPSOID_GRID
+                jigsaw_def_t. \
+                    JIGSAW_ELLIPSOID_GRID
         
     if (msht.radii is not None and \
         msht.radii.size != +0 ):
     #--------------------------------- assign ptrs for RADII
         mshl.radii.size = msht.radii.size
         mshl.radii.data = \
-        msht.radii.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.radii, real_t)
 
     if (msht.vert2 is not None and \
         msht.vert2.size != +0 ):
     #--------------------------------- assign ptrs for VERT2
         mshl.vert2.size = msht.vert2.size
         mshl.vert2.data = \
-        msht.vert2.ctypes.data_as( \
-            ct.POINTER(libsaw_VERT2_t))
+            put_ptr_t (
+               msht.vert2,libsaw_VERT2_t)
 
     if (msht.vert3 is not None and \
         msht.vert3.size != +0 ):
     #--------------------------------- assign ptrs for VERT3
         mshl.vert3.size = msht.vert3.size
         mshl.vert3.data = \
-        msht.vert3.ctypes.data_as( \
-            ct.POINTER(libsaw_VERT3_t))
+            put_ptr_t (
+               msht.vert3,libsaw_VERT3_t)
 
     if (msht.power is not None and \
         msht.power.size != +0 ):
     #--------------------------------- assign ptrs for POWER
         mshl.power.size = msht.power.size
         mshl.power.data = \
-        msht.power.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.power, real_t)
 
     if (msht.edge2 is not None and \
         msht.edge2.size != +0 ):
     #--------------------------------- assign ptrs for EDGE2
         mshl.edge2.size = msht.edge2.size
         mshl.edge2.data = \
-        msht.edge2.ctypes.data_as( \
-            ct.POINTER(libsaw_EDGE2_t))
+            put_ptr_t (
+               msht.edge2,libsaw_EDGE2_t)
 
     if (msht.tria3 is not None and \
         msht.tria3.size != +0 ):
     #--------------------------------- assign ptrs for TRIA3
         mshl.tria3.size = msht.tria3.size
         mshl.tria3.data = \
-        msht.tria3.ctypes.data_as( \
-            ct.POINTER(libsaw_TRIA3_t))
+            put_ptr_t (
+               msht.tria3,libsaw_TRIA3_t)
 
     if (msht.quad4 is not None and \
         msht.quad4.size != +0 ):
     #--------------------------------- assign ptrs for QUAD4
         mshl.quad4.size = msht.quad4.size
         mshl.quad4.data = \
-        msht.quad4.ctypes.data_as( \
-            ct.POINTER(libsaw_QUAD4_t))
+            put_ptr_t (
+               msht.quad4,libsaw_QUAD4_t)
 
     if (msht.tria4 is not None and \
         msht.tria4.size != +0 ):
     #--------------------------------- assign ptrs for TRIA4
         mshl.tria4.size = msht.tria4.size
         mshl.tria4.data = \
-        msht.tria4.ctypes.data_as( \
-            ct.POINTER(libsaw_TRIA4_t))
+            put_ptr_t (
+               msht.tria4,libsaw_TRIA4_t)
 
     if (msht.hexa8 is not None and \
         msht.hexa8.size != +0 ):
     #--------------------------------- assign ptrs for HEXA8
         mshl.hexa8.size = msht.hexa8.size
         mshl.hexa8.data = \
-        msht.hexa8.ctypes.data_as( \
-            ct.POINTER(libsaw_HEXA8_t))
+            put_ptr_t (
+               msht.hexa8,libsaw_HEXA8_t)
 
     if (msht.wedg6 is not None and \
         msht.wedg6.size != +0 ):
     #--------------------------------- assign ptrs for WEDG6
         mshl.wedg6.size = msht.wedg6.size
         mshl.wedg6.data = \
-        msht.wedg6.ctypes.data_as( \
-            ct.POINTER(libsaw_WEDG6_t))
+            put_ptr_t (
+                msht.wedg6,libsaw_WEDG6_t)
 
     if (msht.pyra5 is not None and \
         msht.pyra5.size != +0 ):
     #--------------------------------- assign ptrs for PYRA5
         mshl.pyra5.size = msht.pyra5.size
         mshl.pyra5.data = \
-        msht.pyra5.ctypes.data_as( \
-            ct.POINTER(libsaw_PYRA5_t))
+            put_ptr_t (
+                msht.pyra5,libsaw_PYRA5_t)
 
     if (msht.bound is not None and \
         msht.bound.size != +0 ):
     #--------------------------------- assign ptrs for BOUND
         mshl.bound.size = msht.bound.size
         mshl.bound.data = \
-        msht.bound.ctypes.data_as( \
-            ct.POINTER(libsaw_BOUND_t))
+            put_ptr_t (
+                msht.bound,libsaw_BOUND_t)
 
     if (msht.xgrid is not None and \
         msht.xgrid.size != +0 ):
     #--------------------------------- assign ptrs for XGRID
         mshl.xgrid.size = msht.xgrid.size
         mshl.xgrid.data = \
-        msht.xgrid.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.xgrid, real_t)
 
     if (msht.ygrid is not None and \
         msht.ygrid.size != +0 ):
     #--------------------------------- assign ptrs for YGRID
         mshl.ygrid.size = msht.ygrid.size
         mshl.ygrid.data = \
-        msht.ygrid.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.ygrid, real_t)
 
     if (msht.zgrid is not None and \
         msht.zgrid.size != +0 ):
     #--------------------------------- assign ptrs for ZGRID
         mshl.zgrid.size = msht.zgrid.size
         mshl.zgrid.data = \
-        msht.zgrid.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.zgrid, real_t)
 
     if (msht.value is not None and \
         msht.value.size != +0 ):
     #--------------------------------- assign ptrs for VALUE
         mshl.value.size = msht.value.size
         mshl.value.data = \
-        msht.value.ctypes.data_as( \
-            ct.POINTER(real_t))
+            put_ptr_t(msht.value, real_t)
 
     return
 
@@ -436,20 +455,28 @@ def get_msh_t(msht,mshl):
 
     """
     if (mshl.flags == \
-               JIGSAW_EUCLIDEAN_MESH):
-        msht.mshID = "euclidean-mesh"
+            jigsaw_def_t. \
+                JIGSAW_EUCLIDEAN_MESH):
+        
+        msht.mshID =  "euclidean-mesh"
     
     if (mshl.flags == \
-               JIGSAW_EUCLIDEAN_GRID):
-        msht.mshID = "euclidean-grid"
+            jigsaw_def_t. \
+                JIGSAW_EUCLIDEAN_GRID):
+        
+        msht.mshID =  "euclidean-grid"
 
     if (mshl.flags == \
-               JIGSAW_ELLIPSOID_MESH):
-        msht.mshID = "ellipsoid-mesh"
+            jigsaw_def_t. \
+                JIGSAW_ELLIPSOID_MESH):
+        
+        msht.mshID =  "ellipsoid-mesh"
 
     if (mshl.flags == \
-               JIGSAW_ELLIPSOID_GRID):
-        msht.mshID = "ellipsoid-grid"
+            jigsaw_def_t. \
+                JIGSAW_ELLIPSOID_GRID):
+        
+        msht.mshID =  "ellipsoid-grid"
 
     if (mshl.radii.size >= +1):
     #--------------------------------- copy buffer for RADII

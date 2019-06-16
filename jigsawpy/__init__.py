@@ -13,7 +13,7 @@
  * JIGSAW: Interface to the JIGSAW meshing library.
 ------------------------------------------------------------
  *
- * Last updated: 12 June, 2019
+ * Last updated: 15 June, 2019
  *
  * Copyright 2019 --
  * Darren Engwirda
@@ -52,8 +52,7 @@
 
 from jigsawpy.msh_t import jigsaw_msh_t
 from jigsawpy.jig_t import jigsaw_jig_t
-
-from jigsawpy.def_l import *
+from jigsawpy.def_t import jigsaw_def_t
 
 from jigsawpy.loadmsh import loadmsh
 from jigsawpy.savemsh import savemsh
@@ -61,7 +60,8 @@ from jigsawpy.loadjig import loadjig
 from jigsawpy.savejig import savejig
 
 from jigsawpy.certify import certify
-from jigsawpy import jigsaw, libsaw
+
+from jigsawpy  import jigsaw, libsaw
 
 class cmd :
 #--------------------------------- expose cmd-line interface

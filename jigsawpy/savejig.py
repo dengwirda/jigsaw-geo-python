@@ -7,7 +7,7 @@ def savechar(file,sval,stag):
     if (isinstance(sval,str)):
         file.write("  " + stag + "=" + sval + "\n")
     else:
-        raise Exception("Invalid data: OPTS.",stag)
+        raise Exception("Invalid data: OPTS."+stag)
 
     return
 
@@ -17,7 +17,7 @@ def saveints(file,ival,stag):
         file.write( \
             "  " + stag + "=" + str(ival) + "\n")
     else:
-        raise Exception("Invalid data: OPTS.",stag)
+        raise Exception("Invalid data: OPTS."+stag)
 
     return
     
@@ -25,9 +25,9 @@ def savereal(file,fval,stag):
 
     if (isinstance(fval,float)):
         file.write( \
-            "  " + stag + '=' + str(fval) + "\n")
+            "  " + stag + "=" + str(fval) + "\n")
     else:
-        raise Exception("Invalid data: OPTS.",stag)
+        raise Exception("Invalid data: OPTS."+stag)
 
     return
     
@@ -39,7 +39,7 @@ def savebool(file,bval,stag):
         else:
             file.write("  " + stag + "=FALSE\n")
     else:
-        raise Exception("Invalid data: OPTS.",stag)
+        raise Exception("Invalid data: OPTS."+stag)
 
     return
 
@@ -71,7 +71,7 @@ def savejig(name,opts):
 
     with Path(name).open("w") as file:
         
-        file.write("# " + name + \
+        file.write("# " + Path(name).name + \
     " config. file; created by JIGSAW's PYTHON interface \n")
         
     #------------------------------------------ MISC options

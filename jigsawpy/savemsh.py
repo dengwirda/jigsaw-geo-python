@@ -11,16 +11,16 @@ def saveradii(mesh,file):
     """
     if   (mesh.radii.size == +3):
         file.write("RADII="\
-            f"{mesh.radii[0]:.16E};" \
-            f"{mesh.radii[1]:.16E};" \
-            f"{mesh.radii[2]:.16E}\n"\
+            f"{mesh.radii[0]:.18G};" \
+            f"{mesh.radii[1]:.18G};" \
+            f"{mesh.radii[2]:.18G}\n"\
             )
 
     elif (mesh.radii.size == +1):
         file.write("RADII="\
-            f"{mesh.radii[0]:.16E};" \
-            f"{mesh.radii[0]:.16E};" \
-            f"{mesh.radii[0]:.16E}\n"\
+            f"{mesh.radii[0]:.18G};" \
+            f"{mesh.radii[0]:.18G};" \
+            f"{mesh.radii[0]:.18G}\n"\
             )
 
     return
@@ -39,8 +39,8 @@ def savevert2(mesh,file):
 
     for ipos in range(mesh.vert2.size):
         file.write( \
-            f"{xpts[ipos,0]:.16E};"  \
-            f"{xpts[ipos,1]:.16E};"  \
+            f"{xpts[ipos,0]:.18G};"  \
+            f"{xpts[ipos,1]:.18G};"  \
             f"{itag[ipos  ]}\n"  \
             )
 
@@ -60,9 +60,9 @@ def savevert3(mesh,file):
 
     for ipos in range(mesh.vert3.size):
         file.write(
-            f"{xpts[ipos,0]:.16E};"  \
-            f"{xpts[ipos,1]:.16E};"  \
-            f"{xpts[ipos,2]:.16E};"  \
+            f"{xpts[ipos,0]:.18G};"  \
+            f"{xpts[ipos,1]:.18G};"  \
+            f"{xpts[ipos,2]:.18G};"  \
             f"{itag[ipos  ]}\n" \
             )
 
@@ -80,7 +80,17 @@ def savepower(mesh,file):
     file.write ( "POWER=" + \
         str(npos) + ";" + str(npwr) + "\n")
 
-    #-- do things here!
+    data = mesh.power[:]
+
+    for ipos in range(mesh.power.size):
+        fstr = ""
+        for ipwr in range(npwr-1):
+            fstr = fstr + \
+            f"{data[ipos,ipwr]:.18G};"
+        fstr = fstr + \
+            f"{data[ipos,npwr]:.18G}\n"
+
+        file.write(fstr)
 
     return
 
@@ -96,7 +106,17 @@ def savevalue(mesh,file):
     file.write ( "VALUE=" + \
         str(npos) + ";" + str(nval) + "\n")
 
-    #-- do things here!
+    data = mesh.value[:]
+
+    for ipos in range(mesh.value.size):
+        fstr = ""
+        for ival in range(nval-1):
+            fstr = fstr + \
+            f"{data[ipos,ival]:.18G};"
+        fstr = fstr + \
+            f"{data[ipos,nval]:.18G}\n"
+
+        file.write(fstr)
 
     return
 
@@ -288,6 +308,35 @@ def savebound(mesh,file):
     return
 
 
+def savecoord(data,file,inum):
+    """
+    SAVECOORD: save the COORD data structure to file.
+    
+    """
+    file.write("COORD=" \
+        + str(inum) + ";" + str(data.size) + "\n")
+
+    for ipos in range(data.size):
+        file.write(f"{data[ipos]:.18G}\n"
+            )
+
+    return
+
+
+def savendmat(data,file):
+    """
+    SAVENDMAT: save the VALUE data structure to file.
+    
+    """
+    file.write("VALUE=" \
+        + str(np.prod(data.shape)) + ";+1" + "\n")
+
+    for iter in np.nditer(data,order="F"):
+        file.write(f"{iter:.18G}\n")
+
+    return
+
+
 def save_mesh_file(mesh,file,nver,kind):
 
     file.write("MSHID=" + str(nver) + ";" + kind + "\n")
@@ -390,6 +439,60 @@ def save_grid_file(mesh,file,nver,kind):
 
     file.write("MSHID=" + str(nver) + ";" + kind + "\n")
 
+    if (mesh.radii is not None and \
+        mesh.radii.size != +0):
+
+    #----------------------------------- write RADII struct.
+        saveradii(mesh.radii,file)
+
+    #----------------------------------- calc. NDIMS struct.
+    ndim =  +0
+
+    if (mesh.xgrid is not None and \
+        mesh.xgrid.size != +0):
+
+        ndim += +1
+
+    if (mesh.ygrid is not None and \
+        mesh.ygrid.size != +0):
+
+        ndim += +1
+
+    if (mesh.zgrid is not None and \
+        mesh.zgrid.size != +0):
+
+        ndim += +1
+
+    if (ndim >= +1):
+    #----------------------------------- write NDIMS struct.
+        file.write(
+        "NDIMS=" + str(ndim) + "\n")
+
+
+    if (mesh.xgrid is not None and \
+        mesh.xgrid.size != +0):
+
+    #----------------------------------- write XGRID struct.
+        savecoord(mesh.xgrid,file,1)
+
+    if (mesh.ygrid is not None and \
+        mesh.ygrid.size != +0):
+
+    #----------------------------------- write YGRID struct.
+        savecoord(mesh.ygrid,file,2)
+
+    if (mesh.zgrid is not None and \
+        mesh.zgrid.size != +0):
+
+    #----------------------------------- write ZGRID struct.
+        savecoord(mesh.zgrid,file,3)
+
+    if (mesh.value is not None and \
+        mesh.value.size != +0):
+
+    #----------------------------------- write VALUE struct.
+        savendmat(mesh.value,file)
+
     return
 
 
@@ -426,7 +529,7 @@ def savemsh(name,mesh):
 
     with Path(name).open("w") as file:
     #----------------------------------- write JIGSAW object    
-        file.write("# " + name + \
+        file.write("# " + Path(name).name + \
     "; created by JIGSAW's PYTHON interface \n")
    
         if (kind == "euclidean-mesh"):

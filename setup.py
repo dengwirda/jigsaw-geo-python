@@ -1,27 +1,61 @@
+
+import io
+import os
+
 from setuptools import setup, find_packages
 
-version = '0.0.1'
+NAME = "jigsawpy"
+DESCRIPTION = \
+    "Python interface for the JIGSAW meshing library."
+AUTHOR = "Darren Engwirda"
+AUTHOR_EMAIL = "darren.engwirda@columbia.edu"
+URL = "https://github.com/dengwirda/"
+VERSION = "0.0.1"
+REQUIRES_PYTHON = ">=3.3.0"
 
-setup(name='jigsawpy',
-      version=version,
-      description='JIGSAW(GEO): Mesh generation for geoscientific modellings.',
-      url='https://github.com/dengwirda/jigsaw-geo-python',
-      author='Darren Engwirda',
-      author_email='de2363@columbia.edu',
-      license='custom',
-      classifiers=[
-          'Development Status :: 3 - Alpha',
-          'Operating System :: OS Independent',
-          'Intended Audience :: Science/Research',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 2',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Topic :: Scientific/Engineering',
-      ],
-      packages=find_packages(),
-      package_data={},
-      install_requires=['numpy', 'pathlib'],
-      entry_points={})
+REQUIRED = [
+    "numpy", "pathlib", "matplotlib"
+]
+
+CLASSIFY = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Visualization"
+]
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+try:
+    with io.open(os.path.join( \
+        here,"README.md"),encoding="utf-8") as f:
+        LONG_DESCRIPTION = "\n"+f.read()
+
+except FileNotFoundError:
+    LONG_DESCRIPTION = DESCRIPTION
+
+setup(
+    name = NAME,
+    version = VERSION,
+    description = DESCRIPTION,
+    long_description = LONG_DESCRIPTION,
+    long_description_content_type = "text/markdown",
+    license = "custom",    
+    author = AUTHOR,
+    author_email = AUTHOR_EMAIL,
+    python_requires = REQUIRES_PYTHON,
+    url = URL,
+    packages = find_packages(),
+    package_data = {},    
+    install_requires = REQUIRED,
+    classifiers = CLASSIFY,
+    entry_points = {}
+)
+
+
+

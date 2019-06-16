@@ -1,7 +1,7 @@
 
 import ctypes as ct
 
-from jigsawpy.def_l import indx_t, real_t
+from jigsawpy.def_t import indx_t, real_t
 
 #---------------------------- ctypes struct for JIGSAW's API
 

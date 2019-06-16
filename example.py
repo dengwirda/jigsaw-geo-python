@@ -1,91 +1,56 @@
 #!/usr/bin/env python
 
-from timeit import default_timer as timer
-from pathlib import Path
-
 import jigsawpy
 
-import matplotlib.pyplot as plt
-import matplotlib.tri as tri
+from tests.case_1_ import case_1_
+from tests.case_2_ import case_2_
+from tests.case_3_ import case_3_
+from tests.case_4_ import case_4_
+from tests.case_5_ import case_5_
 
 import argparse
 
+def example(IDnumber=1,savefigs=False):
 
-def example(savefigs=False):
+#--------------- don't disp. to screen, write to png backend
 
-    if savefigs:
-        # don't display to the screen, write to the png backend
-        plt.switch_backend('Agg')
+    if savefigs: plt.switch_backend("Agg")
 
-    opts = jigsawpy.jigsaw_jig_t()
+#--------------- delegate to the individual example cases...
+    
+    if   (IDnumber == +1):
+        case_1_(savefigs)
 
-    opts.geom_file = \
-        str(Path()/"jigsaw"/"geo"/"lake.msh")
-    opts.jcfg_file = \
-        str(Path()/"jigsaw"/"out"/"lake.jig")
-    opts.mesh_file = \
-        str(Path()/"jigsaw"/"out"/"lake.msh")
+    elif (IDnumber == +2):
+        case_2_(savefigs)
 
-#---------------------------------- call JIGSAW via cmd-line
+    elif (IDnumber == +3):
+        case_3_(savefigs)
 
-    mesh = jigsawpy.jigsaw_msh_t()
-    geom = jigsawpy.jigsaw_msh_t()
+    elif (IDnumber == +4):
+        case_4_(savefigs)
 
-    opts.hfun_hmax = 0.03
-    opts.mesh_dims = +2
-    opts.optm_iter = +0
+    elif (IDnumber == +5):
+        case_5_(savefigs)
 
-    ttic = timer()
-    jigsawpy.cmd.jigsaw(opts,mesh)
-    ttoc = timer()
-    print("cmd: "+ str(ttoc-ttic))
-
-    fig = plt.figure(1)
-    plt.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
-    plt.axis('equal')
-
-#---------------------------------- call JIGSAW via API-lib.
-
-    mesh = jigsawpy.jigsaw_msh_t()
-    geom = jigsawpy.jigsaw_msh_t()
-
-    jigsawpy.loadmsh(opts.geom_file,geom)
-
-    opts.hfun_hmax = 0.03
-    opts.mesh_dims = +2
-    opts.optm_iter = +0
-
-    ttic = timer()
-    jigsawpy.lib.jigsaw(opts,geom,mesh)
-    ttoc = timer()
-    print("lib: "+ str(ttoc-ttic))
-
-    fig = plt.figure(2)
-    plt.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
-    plt.axis('equal')
-
-    if savefigs:
-        plt.figure(1)
-        plt.savefig('example_cmd.png')
-        plt.figure(2)
-        plt.savefig('example_api.png')
-    else:
-        plt.show()
+    return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument("--savefigs", dest="savefigs", action='store_true',
-                        help="Set this flag to write out figures rather than"
-                             "showing them.")
+    parser.add_argument("--IDnumber", dest="IDnumber", action="store_true",
+                        help="Run EXAMPLE(IDNUMBER).")
+
+    parser.add_argument("--savefigs", dest="savefigs", action="store_true",
+                        help="Set this flag to save figures to file rather" 
+                             "than loading graphics.")
+    
     args = parser.parse_args()
 
-    example(savefigs=args.savefigs)
+    example(IDnumber = args.IDnumber,
+            savefigs = args.savefigs)
+
+
+
