@@ -3,7 +3,7 @@ import subprocess
 import os,inspect
 import shutil
 
-from  pathlib import Path
+from pathlib import Path
 
 from jigsawpy.jig_t import jigsaw_jig_t
 from jigsawpy.msh_t import jigsaw_msh_t
@@ -38,24 +38,24 @@ def jigsaw(opts,mesh=None):
     if (jexename == Path()):
 #---------------------------- set-up path for "local" binary
 
-#   stackoverflow.com/questions/2632199/
-#       how-do-i-get-the-
-#           path-of-the-current-executed-file-in-python
-    filename = \
-        inspect.getsourcefile(lambda:None)
+    #   stackoverflow.com/questions/2632199/
+    #       how-do-i-get-the-
+    #       path-of-the-current-executed-file-in-python
+        filename = \
+            inspect.getsourcefile(lambda:None)
 
-    filepath = Path(os.path.dirname(
-        os.path.abspath(filename))).parent
+        filepath = Path(os.path.dirname(
+            os.path.abspath(filename))).parent
     
-    if   (os.name ==    "nt"):
-        jexename  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "bin" / "jigsaw.exe"
+        if   (os.name ==    "nt"):
+            jexename  = \
+                filepath / "c_lib" \
+          / "jigsaw" / "bin" / "jigsaw.exe"
 
-    elif (os.name == "posix"):
-        jexename  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "bin" / "jigsaw"
+        elif (os.name == "posix"):
+            jexename  = \
+                filepath / "c_lib" \
+          / "jigsaw" / "bin" / "jigsaw"
 
         else:
             jexename  = Path ()
@@ -108,24 +108,24 @@ def tripod(opts,tria=None):
     if (jexename == Path()):
 #---------------------------- set-up path for "local" binary
         
-#   stackoverflow.com/questions/2632199/
-#       how-do-i-get-the-
-#           path-of-the-current-executed-file-in-python
-    filename = \
-        inspect.getsourcefile(lambda:None)
+    #   stackoverflow.com/questions/2632199/
+    #       how-do-i-get-the-
+    #       path-of-the-current-executed-file-in-python
+        filename = \
+            inspect.getsourcefile(lambda:None)
 
-    filepath = Path(os.path.dirname(
-        os.path.abspath(filename))).parent
+        filepath = Path(os.path.dirname(
+            os.path.abspath(filename))).parent
     
-    if   (os.name ==    "nt"):
-        jexename  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "bin" / "tripod.exe"
+        if   (os.name ==    "nt"):
+            jexename  = \
+                filepath / "c_lib" \
+          / "jigsaw" / "bin" / "tripod.exe"
 
-    elif (os.name == "posix"):
-        jexename  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "bin" / "tripod"
+        elif (os.name == "posix"):
+            jexename  = \
+                filepath / "c_lib" \
+          / "jigsaw" / "bin" / "tripod"
 
         else:
             jexename  = Path ()
