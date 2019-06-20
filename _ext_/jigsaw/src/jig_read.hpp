@@ -225,7 +225,8 @@
             std::transform(__str.begin(),   \
                            __str.  end(),   \
                            __str.begin(),   \
-            [](unsigned char c){ return ::toupper(c); } ) ;
+            [](unsigned char c){ return \
+              (unsigned char)::toupper(c) ; } )
 
     /*---------------------------------- read "file" data */
         #define __putFILE(__fun, __tok)     \
@@ -364,7 +365,8 @@
             std::transform(_stok[0].begin() , 
                            _stok[0].  end() , 
                            _stok[0].begin() , 
-            [](unsigned char c){ return ::toupper(c); } ) ;
+            [](unsigned char c){ return 
+              (unsigned char)::toupper(c); } ) ;
         
         /*---------------------------- read MISC keywords */    
             if (_stok[0] == "VERBOSITY")

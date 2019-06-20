@@ -1260,7 +1260,8 @@
             std::transform(_line.begin() , 
                            _line.  end() , 
                            _line.begin() , 
-            [](unsigned char c){ return ::toupper(c); } ) ;
+            [](unsigned char c){ return 
+              (unsigned char)::toupper(c); } ) ;
             
             containers::
                 array<std::string> _stok ;
