@@ -270,7 +270,7 @@ def case_1c(savefigs=False):
     return
 
 
-def case_1_(savefigs=False):
+def case_1_(filepath,savefigs=False):
 
 #------------------------------------ build various examples
 

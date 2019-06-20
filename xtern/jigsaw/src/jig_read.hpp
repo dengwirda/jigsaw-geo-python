@@ -31,7 +31,7 @@
      *
     --------------------------------------------------------
      *
-     * Last updated: 10 April, 2019
+     * Last updated: 19 June, 2019
      *
      * Copyright 2013-2019
      * Darren Engwirda
@@ -364,7 +364,7 @@
             std::transform(_stok[0].begin() , 
                            _stok[0].  end() , 
                            _stok[0].begin() , 
-                         ::toupper) ;
+            [](unsigned char c){ return ::toupper(c); } ) ;
         
         /*---------------------------- read MISC keywords */    
             if (_stok[0] == "VERBOSITY")

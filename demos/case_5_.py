@@ -15,7 +15,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 
-def case_5_(savefigs=False):
+def case_5_(filepath,savefigs=False):
 
     opts = jigsawpy.jigsaw_jig_t()
 
@@ -25,13 +25,13 @@ def case_5_(savefigs=False):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        str(Path()/"files"/"aust.msh")  # GEOM file
+        str(Path(filepath)/"ball.msh")  # GEOM file
         
     opts.jcfg_file = \
-        str(Path()/"files"/"aust.jig")  # JCFG file
+        str(Path(filepath)/"ball.jig")  # JCFG file
     
     opts.mesh_file = \
-        str(Path()/"files"/"mesh.msh")  # MESH file
+        str(Path(filepath)/"mesh.msh")  # MESH file
 
 #------------------------------------ define JIGSAW geometry
     

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 from matplotlib.collections import LineCollection
 
-def case_4_(savefigs=False):
+def case_4_(filepath,savefigs=False):
 
     opts = jigsawpy.jigsaw_jig_t()
 
@@ -28,16 +28,13 @@ def case_4_(savefigs=False):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        str(Path()/"files"/"us48.msh")  # GEOM file
+        str(Path(filepath)/"us48.msh")  # GEOM file
         
     opts.jcfg_file = \
-        str(Path()/"files"/"us48.jig")  # JCFG file
+        str(Path(filepath)/"us48.jig")  # JCFG file
     
     opts.mesh_file = \
-        str(Path()/"files"/"mesh.msh")  # MESH file
-    
-    opts.hfun_file = \
-        str(Path()/"files"/"hfun.msh")  # HFUN file
+        str(Path(filepath)/"mesh.msh")  # MESH file
 
 #------------------------------------ build mesh via JIGSAW!
 

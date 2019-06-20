@@ -1,7 +1,7 @@
 ## `JIGSAW(GEO): Mesh generation for geoscientific modelling`
 
 <p align="center">
-  <img src = "files/voro.jpg">
+  <img src = "image/voro.jpg">
 </p>
 
 `JIGSAW(GEO)` is a set of algorithms designed to generate unstructured grids for geoscientific modelling. Applications include: large-scale atmospheric simulation and numerical weather prediction, global and coastal ocean-modelling, and ice-sheet dynamics. 

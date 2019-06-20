@@ -18,12 +18,12 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 from matplotlib.collections import LineCollection
 
-def case_2_(savefigs=False):
+def case_2_(filepath,savefigs=False):
 
 #------------------------------------ define JIGSAW geometry
 
     geom_file = \
-        str (Path()/"files"/"lake.msh")
+        str (Path(filepath)/"lake.msh")
     
     geom = jigsawpy.jigsaw_msh_t()
 

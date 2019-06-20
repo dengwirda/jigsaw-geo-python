@@ -35,18 +35,16 @@ if (jlibname == Path()):
     filename = \
         inspect.getsourcefile(lambda:None)
 
-    filepath = Path(os.path.dirname(
-        os.path.abspath(filename))).parent
-    
+    filepath = \
+        (Path(filename).resolve()).parent
+
     if   (os.name ==    "nt"):
         jlibname  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "lib" / "libjigsaw.dll"
+            filepath/"_lib"/  "jigsaw.dll"
 
     elif (os.name == "posix"):
         jlibname  = \
-            filepath / "c_lib" \
-      / "jigsaw" / "lib" / "libjigsaw.so"
+            filepath/"_lib"/"libjigsaw.so"
 
     else:
         jlibname  = Path ()
@@ -57,10 +55,10 @@ if (jlibname == Path()):
 if (jlibname == Path()):
 #---------------------------- search machine path for binary
     if   (os.name ==    "nt"):
-        jlibname  = Path ( "libjigsaw.dll" )
+        jlibname  = Path (    "jigsaw.dll" )
 
     elif (os.name == "posix"):
-        jlibname  = Path ( "libjigsaw.so" )
+        jlibname  = Path (  "libjigsaw.so" )
 
     else:
         jlibname  = Path ()

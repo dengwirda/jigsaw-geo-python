@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 from matplotlib.collections import LineCollection
 
-def case_3_(savefigs=False):
+def case_3_(filepath,savefigs=False):
 
     opts = jigsawpy.jigsaw_jig_t()
 
@@ -28,26 +28,26 @@ def case_3_(savefigs=False):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        str(Path()/"files"/"aust.msh")  # GEOM file
+        str(Path(filepath)/"aust.msh")  # GEOM file
         
     opts.jcfg_file = \
-        str(Path()/"files"/"aust.jig")  # JCFG file
+        str(Path(filepath)/"aust.jig")  # JCFG file
     
     opts.mesh_file = \
-        str(Path()/"files"/"mesh.msh")  # MESH file
+        str(Path(filepath)/"mesh.msh")  # MESH file
     
     opts.hfun_file = \
-        str(Path()/"files"/"hfun.msh")  # HFUN file
+        str(Path(filepath)/"hfun.msh")  # HFUN file
 
 #------------------------------------ setup TOPO for spacing
 
     print ("Load topo-data: case 3a.")
 
     geom_file = \
-        str(Path()/"files"/"aust.msh")
+        str(Path(filepath)/"aust.msh")
 
     topo_file = \
-        str(Path()/"files"/"topo.msh")
+        str(Path(filepath)/"topo.msh")
 
     jigsawpy.loadmsh(geom_file,geom)
     jigsawpy.loadmsh(topo_file,topo)

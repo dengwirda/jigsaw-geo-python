@@ -42,20 +42,18 @@ def jigsaw(opts,mesh=None):
     #       how-do-i-get-the-
     #       path-of-the-current-executed-file-in-python
         filename = \
-            inspect.getsourcefile(lambda:None)
+            inspect.getsourcefile(lambda:0)
 
-        filepath = Path(os.path.dirname(
-            os.path.abspath(filename))).parent
-    
+        filepath = \
+            Path(filename).resolve().parent
+
         if   (os.name ==    "nt"):
             jexename  = \
-                filepath / "c_lib" \
-          / "jigsaw" / "bin" / "jigsaw.exe"
+                filepath/"_bin"/"jigsaw.exe"
 
         elif (os.name == "posix"):
             jexename  = \
-                filepath / "c_lib" \
-          / "jigsaw" / "bin" / "jigsaw"
+                filepath/"_bin"/"jigsaw"
 
         else:
             jexename  = Path ()
@@ -65,7 +63,10 @@ def jigsaw(opts,mesh=None):
 
     if (jexename == Path()):
 #---------------------------- search machine path for binary
-        jexename = Path(shutil.which("jigsaw"))
+        jexescan = shutil.which("jigsaw")        
+
+        if (jexescan is not None):        
+            jexename  = Path ( jexescan )
 
     if (jexename != Path()):
 #---------------------------- call JIGSAW and capture output
@@ -112,20 +113,18 @@ def tripod(opts,tria=None):
     #       how-do-i-get-the-
     #       path-of-the-current-executed-file-in-python
         filename = \
-            inspect.getsourcefile(lambda:None)
+            inspect.getsourcefile(lambda:0)
 
-        filepath = Path(os.path.dirname(
-            os.path.abspath(filename))).parent
-    
+        filepath = \
+            Path(filename).resolve().parent
+
         if   (os.name ==    "nt"):
             jexename  = \
-                filepath / "c_lib" \
-          / "jigsaw" / "bin" / "tripod.exe"
+                filepath/"_bin"/"tripod.exe"
 
         elif (os.name == "posix"):
             jexename  = \
-                filepath / "c_lib" \
-          / "jigsaw" / "bin" / "tripod"
+                filepath/"_bin"/"tripod"
 
         else:
             jexename  = Path ()
@@ -135,7 +134,10 @@ def tripod(opts,tria=None):
 
     if (jexename == Path()):
 #---------------------------- search machine path for binary
-        jexename = Path(shutil.which("tripod"))
+        jexescan = shutil.which("tripod")        
+
+        if (jexescan is not None):        
+            jexename  = Path ( jexescan )
 
     if (jexename != Path()):
 #---------------------------- call JIGSAW and capture output
