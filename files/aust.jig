@@ -1,0 +1,10 @@
+# aust.jig config. file; created by JIGSAW's PYTHON interface 
+  GEOM_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/aust.msh
+  HFUN_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/hfun.msh
+  HFUN_SCAL=absolute
+  HFUN_HMAX=inf
+  HFUN_HMIN=0.0
+  MESH_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/mesh.msh
+  MESH_DIMS=2
+  MESH_EPS1=1.0
+  OPTM_QLIM=0.8

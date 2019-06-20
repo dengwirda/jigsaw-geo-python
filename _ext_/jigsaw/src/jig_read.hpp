@@ -225,7 +225,7 @@
             std::transform(__str.begin(),   \
                            __str.  end(),   \
                            __str.begin(),   \
-                ::toupper ) ;
+            [](unsigned char c){ return ::toupper(c); } ) ;
 
     /*---------------------------------- read "file" data */
         #define __putFILE(__fun, __tok)     \

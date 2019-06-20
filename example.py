@@ -2,11 +2,11 @@
 
 import jigsawpy
 
-from demos.case_1_ import case_1_
-from demos.case_2_ import case_2_
-from demos.case_3_ import case_3_
-from demos.case_4_ import case_4_
-from demos.case_5_ import case_5_
+from tests.case_1_ import case_1_
+from tests.case_2_ import case_2_
+from tests.case_3_ import case_3_
+from tests.case_4_ import case_4_
+from tests.case_5_ import case_5_
 
 import os
 import argparse

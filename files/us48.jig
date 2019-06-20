@@ -1,0 +1,7 @@
+# us48.jig config. file; created by JIGSAW's PYTHON interface 
+  GEOM_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/us48.msh
+  HFUN_HMAX=0.005
+  MESH_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/mesh.msh
+  MESH_DIMS=2
+  MESH_EPS1=0.16666666666666666
+  OPTM_QLIM=0.9

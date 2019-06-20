@@ -4,8 +4,7 @@ import subprocess
 import shutil
 import pathlib
 
-from setuptools import setup, find_packages
-from distutils.command.build import build
+from setuptools import setup, find_packages, Command
 
 NAME = "jigsawpy"
 DESCRIPTION = \
@@ -14,7 +13,7 @@ AUTHOR = "Darren Engwirda"
 AUTHOR_EMAIL = "darren.engwirda@columbia.edu"
 URL = "https://github.com/dengwirda/"
 VERSION = "0.0.2"
-REQUIRES_PYTHON = ">=3.3.0"
+REQUIRES_PYTHON = ">=3.6.0"
 KEYWORDS = "Mesh-generation Delaunay Voronoi"
 
 REQUIRED = [
@@ -44,22 +43,21 @@ except FileNotFoundError:
     LONG_DESCRIPTION = DESCRIPTION
 
 
-class cmake_build(build):
+class build_external(Command):
+
+    description = "build external JIGSAW dependencies"
+
+    user_options = []
+
+    def initialize_options(self): pass
+
+    def   finalize_options(self): pass
+
     def run(self):
-        """
-        Call make_jigsaw before doing 'normal' things
-        
-        """
-       
-        self.make_jigsaw(); super().run()
-
-
-    def make_jigsaw(self):
         """
         The actual cmake-based build steps for JIGSAW
         
         """
-        
         if (self.dry_run): return
 
         cwd_pointer = os.getcwd()
@@ -68,7 +66,7 @@ class cmake_build(build):
             self.announce("cmake config.",level=3)
 
             source_path = str(
-            pathlib.Path(here)/"xtern"/"jigsaw")
+            pathlib.Path(here)/"_ext_"/"jigsaw")
 
             builds_path = str(
             pathlib.Path(source_path) / "build")
@@ -112,13 +110,13 @@ class cmake_build(build):
 
             self.announce("cmake cleanup",level=3)
 
-            shutil.rmtree(builds_path)
-
             shutil.copytree(exesrc_path,exedst_path)
             shutil.copytree(libsrc_path,libdst_path)
 
         finally:
             os.chdir(cwd_pointer)
+
+            shutil.rmtree (builds_path)
 
 
 setup(
@@ -135,13 +133,12 @@ setup(
     url = URL,
     packages = find_packages (),
     cmdclass={
-        "build" : cmake_build,
+        "build_external" : build_external
         },
-    package_data = {"jigsawpy":["_bin/*", "_lib/*"]
+    package_data = {"jigsawpy": ["_bin/*", "_lib/*"]
         },
     install_requires = REQUIRED,
-    classifiers = CLASSIFY,
-    entry_points = {}
+    classifiers = CLASSIFY
 )
 
 
