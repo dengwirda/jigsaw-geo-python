@@ -3,60 +3,61 @@ import numpy as np
 from pathlib import Path
 from jigsawpy.msh_t import jigsaw_msh_t
 
-def loadradii(mesh,file,ltag):
+
+def loadradii(mesh, file, ltag):
     """
     LOADRADII: load the RADII data segment from file.
-    
+
     """
     rtag = ltag[1].split(";")
 
-    mesh.radii = np.empty( \
-        +3,dtype=jigsaw_msh_t.REALS_t)
+    mesh.radii = np.empty(
+        +3, dtype=jigsaw_msh_t.REALS_t)
 
-    if   (len(rtag) == +1):    
+    if (len(rtag) == +1):
         mesh.radii[0] = float(rtag[0])
         mesh.radii[1] = float(rtag[0])
         mesh.radii[2] = float(rtag[0])
 
-    elif (len(rtag) == +3):    
+    elif (len(rtag) == +3):
         mesh.radii[0] = float(rtag[0])
         mesh.radii[1] = float(rtag[1])
         mesh.radii[2] = float(rtag[2])
 
     else:
-        raise Exception( \
-            "Invalid RADII data: "+ ltag)
+        raise Exception(
+            "Invalid RADII data: " + ltag)
 
     return
 
 
-def loadpoint(mesh,file,ltag):
+def loadpoint(mesh, file, ltag):
     """
     LOADPOINT: load the POINT data segment from file.
-    
+
     """
-    if   (mesh.ndims == +2):
-        loadvert2(mesh,file,ltag)
-    
+    if (mesh.ndims == +2):
+        loadvert2(mesh, file, ltag)
+
     elif (mesh.ndims == +3):
-        loadvert3(mesh,file,ltag)
+        loadvert3(mesh, file, ltag)
 
     else:
-        raise Exception( \
-            "Invalid NDIMS data: "+ ltag)
-    
+        raise Exception(
+            "Invalid NDIMS data: " + ltag)
+
     return
-    
-    
-def loadvert2(mesh,file,ltag):
+
+
+def loadvert2(mesh, file, ltag):
     """
     LOADVERT2: load the 2-dim. vertex pos. from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.vert2 = np.empty( \
+
+    mesh.vert2 = np.empty(
         lnum, dtype=jigsaw_msh_t.VERT2_t)
 
     vpts = mesh.vert2["coord"]
@@ -65,31 +66,31 @@ def loadvert2(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-       
+
         if (len(dtag) == +3):
-            vpts[next,0] = float(dtag[0])
-            vpts[next,1] = float(dtag[1])
-            
-            itag[next]   = int  (dtag[2])
+            vpts[next, 0] = float(dtag[0])
+            vpts[next, 1] = float(dtag[1])
+
+            itag[next] = int(dtag[2])
         else:
-            raise Exception( \
-            "Invalid POINT data: "+ data)
+            raise Exception(
+                "Invalid POINT data: " + data)
 
         lnum -= +1
         next += +1
-    
-    return
-    
 
-def loadvert3(mesh,file,ltag):
+    return
+
+
+def loadvert3(mesh, file, ltag):
     """
     LOADVERT3: load the 3-dim. vertex pos. from file.
 
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.vert3 = np.empty( \
+
+    mesh.vert3 = np.empty(
         lnum, dtype=jigsaw_msh_t.VERT3_t)
 
     vpts = mesh.vert3["coord"]
@@ -98,90 +99,90 @@ def loadvert3(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +4):
-            vpts[next,0] = float(dtag[0])
-            vpts[next,1] = float(dtag[1])
-            vpts[next,2] = float(dtag[2])
-            
-            itag[next]   = int  (dtag[3])
+            vpts[next, 0] = float(dtag[0])
+            vpts[next, 1] = float(dtag[1])
+            vpts[next, 2] = float(dtag[2])
+
+            itag[next] = int(dtag[3])
         else:
-            raise Exception( \
-            "Invalid POINT data: "+ data)
+            raise Exception(
+                "Invalid POINT data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadpower(mesh,file,ltag):
+def loadpower(mesh, file, ltag):
     """
     LOADPOWER: load the POWER data segment from file.
-    
+
     """
-    ptag = ltag[ 1].split(";")
+    ptag = ltag[1].split(";")
 
     lnum = int(ptag[0])
     pnum = int(ptag[1])
     next = +0
-    
-    mesh.power = np.empty( \
-       [lnum,pnum],dtype=jigsaw_msh_t.REALS_t)
 
-    vpwr = mesh.power[:,:]
-   
+    mesh.power = np.empty(
+        [lnum, pnum], dtype=jigsaw_msh_t.REALS_t)
+
+    vpwr = mesh.power[:, :]
+
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         for dpos in range(len(dtag)):
-            vpwr[next,dpos]= float(dtag[dpos])
-        
+            vpwr[next, dpos] = float(dtag[dpos])
+
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadvalue(mesh,file,ltag):
+def loadvalue(mesh, file, ltag):
     """
     LOADVALUE: load the VALUE data segment from file.
-    
+
     """
-    vtag = ltag[ 1].split(";")
+    vtag = ltag[1].split(";")
 
     lnum = int(vtag[0])
     vnum = int(vtag[1])
     next = +0
-    
-    mesh.value = np.empty( \
-       [lnum,vnum],dtype=jigsaw_msh_t.REALS_t)    
 
-    vals = mesh.value[:,:]
+    mesh.value = np.empty(
+        [lnum, vnum], dtype=jigsaw_msh_t.REALS_t)
+
+    vals = mesh.value[:, :]
 
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         for dpos in range(len(dtag)):
-            vals[next,dpos]= float(dtag[dpos])
-        
+            vals[next, dpos] = float(dtag[dpos])
+
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadedge2(mesh,file,ltag):
+def loadedge2(mesh, file, ltag):
     """
     LOADEDGE2: load the EDGE2 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
-    next = 0    
+    next = 0
 
-    mesh.edge2 = np.empty( \
+    mesh.edge2 = np.empty(
         lnum, dtype=jigsaw_msh_t.EDGE2_t)
 
     cell = mesh.edge2["index"]
@@ -191,30 +192,30 @@ def loadedge2(mesh,file,ltag):
         data = file.readline()
         dtag = data.split(";")
 
-        if (len(dtag) == +3):        
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            
-            itag[next]   = int  (dtag[2])
+        if (len(dtag) == +3):
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+
+            itag[next] = int(dtag[2])
         else:
-            raise Exception( \
-            "Invalid EDGE2 data: "+ data)
+            raise Exception(
+                "Invalid EDGE2 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
-        
-        
-def loadtria3(mesh,file,ltag):
+
+
+def loadtria3(mesh, file, ltag):
     """
     LOADTRIA3: load the TRIA3 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.tria3 = np.empty( \
+
+    mesh.tria3 = np.empty(
         lnum, dtype=jigsaw_msh_t.TRIA3_t)
 
     cell = mesh.tria3["index"]
@@ -223,32 +224,32 @@ def loadtria3(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +4):
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            
-            itag[next]   = int  (dtag[3])
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+
+            itag[next] = int(dtag[3])
         else:
-            raise Exception( \
-            "Invalid TRIA3 data: "+ data)
+            raise Exception(
+                "Invalid TRIA3 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
-        
-        
-def loadquad4(mesh,file,ltag):
+
+
+def loadquad4(mesh, file, ltag):
     """
     LOADUAD4: load the QUAD4 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.quad4 = np.empty( \
+
+    mesh.quad4 = np.empty(
         lnum, dtype=jigsaw_msh_t.QUAD4_t)
 
     cell = mesh.quad4["index"]
@@ -257,33 +258,33 @@ def loadquad4(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +5):
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            cell[next,3] = int  (dtag[3])
-            
-            itag[next]   = int  (dtag[4])
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+            cell[next, 3] = int(dtag[3])
+
+            itag[next] = int(dtag[4])
         else:
-            raise Exception( \
-            "Invalid QUAD4 data: "+ data)
+            raise Exception(
+                "Invalid QUAD4 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
-        
-        
-def loadtria4(mesh,file,ltag):
+
+
+def loadtria4(mesh, file, ltag):
     """
     LOADTRIA4: load the TRIA4 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.tria4 = np.empty( \
+
+    mesh.tria4 = np.empty(
         lnum, dtype=jigsaw_msh_t.TRIA4_t)
 
     cell = mesh.tria4["index"]
@@ -292,33 +293,33 @@ def loadtria4(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-    
-        if (len(dtag) == +5):     
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            cell[next,3] = int  (dtag[3])
-            
-            itag[next]   = int  (dtag[4])
+
+        if (len(dtag) == +5):
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+            cell[next, 3] = int(dtag[3])
+
+            itag[next] = int(dtag[4])
         else:
-            raise Exception( \
-            "Invalid TRIA4 data: "+ data)
+            raise Exception(
+                "Invalid TRIA4 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
-    
-    
-def loadhexa8(mesh,file,ltag):
+
+
+def loadhexa8(mesh, file, ltag):
     """
     LOADHEXA8: load the HEXA8 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.hexa8 = np.empty( \
+
+    mesh.hexa8 = np.empty(
         lnum, dtype=jigsaw_msh_t.HEXA8_t)
 
     cell = mesh.hexa8["index"]
@@ -327,37 +328,37 @@ def loadhexa8(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +9):
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            cell[next,3] = int  (dtag[3])
-            cell[next,4] = int  (dtag[4])
-            cell[next,5] = int  (dtag[5])
-            cell[next,6] = int  (dtag[6])
-            cell[next,7] = int  (dtag[7])
-            
-            itag[next]   = int  (dtag[8])
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+            cell[next, 3] = int(dtag[3])
+            cell[next, 4] = int(dtag[4])
+            cell[next, 5] = int(dtag[5])
+            cell[next, 6] = int(dtag[6])
+            cell[next, 7] = int(dtag[7])
+
+            itag[next] = int(dtag[8])
         else:
-            raise Exception( \
-            "Invalid HEXA8 data: "+ data)
+            raise Exception(
+                "Invalid HEXA8 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadpyra5(mesh,file,ltag):
+def loadpyra5(mesh, file, ltag):
     """
     LOADPYRA5: load the PYRA5 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.pyra5 = np.empty( \
+
+    mesh.pyra5 = np.empty(
         lnum, dtype=jigsaw_msh_t.PYRA5_t)
 
     cell = mesh.pyra5["index"]
@@ -366,34 +367,34 @@ def loadpyra5(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +6):
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            cell[next,3] = int  (dtag[3])
-            cell[next,4] = int  (dtag[4])
-            
-            itag[next]   = int  (dtag[5])
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+            cell[next, 3] = int(dtag[3])
+            cell[next, 4] = int(dtag[4])
+
+            itag[next] = int(dtag[5])
         else:
-            raise Exception( \
-            "Invalid PYRA5 data: "+ data)
+            raise Exception(
+                "Invalid PYRA5 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadwedg6(mesh,file,ltag):
+def loadwedg6(mesh, file, ltag):
     """
     LOADWEDG6: load the WEDG6 data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.wedg6 = np.empty( \
+
+    mesh.wedg6 = np.empty(
         lnum, dtype=jigsaw_msh_t.WEDG6_t)
 
     cell = mesh.wedg6["index"]
@@ -402,35 +403,35 @@ def loadwedg6(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-        
+
         if (len(dtag) == +7):
-            cell[next,0] = int  (dtag[0])
-            cell[next,1] = int  (dtag[1])
-            cell[next,2] = int  (dtag[2])
-            cell[next,3] = int  (dtag[3])
-            cell[next,4] = int  (dtag[4])
-            cell[next,5] = int  (dtag[5])
-            
-            itag[next]   = int  (dtag[6])
+            cell[next, 0] = int(dtag[0])
+            cell[next, 1] = int(dtag[1])
+            cell[next, 2] = int(dtag[2])
+            cell[next, 3] = int(dtag[3])
+            cell[next, 4] = int(dtag[4])
+            cell[next, 5] = int(dtag[5])
+
+            itag[next] = int(dtag[6])
         else:
-            raise Exception( \
-            "Invalid WEDG6 data: "+ data)
+            raise Exception(
+                "Invalid WEDG6 data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadbound(mesh,file,ltag):
+def loadbound(mesh, file, ltag):
     """
     LOADBOUND: load the BOUND data segment from file.
-    
+
     """
     lnum = int(ltag[1])
     next = +0
-    
-    mesh.bound = np.empty( \
+
+    mesh.bound = np.empty(
         lnum, dtype=jigsaw_msh_t.BOUND_t)
 
     itag = mesh.bound["IDtag"]
@@ -440,156 +441,156 @@ def loadbound(mesh,file,ltag):
     while (lnum >= +1):
         data = file.readline()
         dtag = data.split(";")
-    
+
         if (len(dtag) == +3):
-            itag[next]   = int  (dtag[0])
-            indx[next]   = int  (dtag[1])
-            kind[next]   = int  (dtag[2])
+            itag[next] = int(dtag[0])
+            indx[next] = int(dtag[1])
+            kind[next] = int(dtag[2])
         else:
-            raise Exception( \
-            "Invalid BOUND data: "+ data)
+            raise Exception(
+                "Invalid BOUND data: " + data)
 
         lnum -= +1
         next += +1
-        
+
     return
 
 
-def loadcoord(mesh,file,ltag):
+def loadcoord(mesh, file, ltag):
     """
     LOADCOORD: load the COORD data segment from file.
-    
+
     """
     ctag = ltag[1].split(";")
 
     idim = int(ctag[0])
     lnum = int(ctag[1])
     next = +0
-    
-    if   (idim == +1):
-        mesh.xgrid = np.empty( \
-            lnum,dtype=jigsaw_msh_t.REALS_t)
+
+    if (idim == +1):
+        mesh.xgrid = np.empty(
+            lnum, dtype=jigsaw_msh_t.REALS_t)
 
         data = mesh.xgrid[:]
 
     elif (idim == +2):
-        mesh.ygrid = np.empty( \
-            lnum,dtype=jigsaw_msh_t.REALS_t)
+        mesh.ygrid = np.empty(
+            lnum, dtype=jigsaw_msh_t.REALS_t)
 
         data = mesh.ygrid[:]
 
     elif (idim == +3):
-        mesh.zgrid = np.empty( \
-            lnum,dtype=jigsaw_msh_t.REALS_t)
+        mesh.zgrid = np.empty(
+            lnum, dtype=jigsaw_msh_t.REALS_t)
 
         data = mesh.zgrid[:]
 
     while (lnum >= +1):
-        data[next] = float(file.readline ())
-    
+        data[next] = float(file.readline())
+
         lnum -= +1
         next += +1
 
     return
-      
-        
-def loadlines(mesh,file,line):
+
+
+def loadlines(mesh, file, line):
     """
     LOADLINES: load the next non-null line from file.
-    
+
     """
-    
-    #------------------------------ skip any 'comment' lines
-   
+
+    # ------------------------------ skip any 'comment' lines
+
     if (line[0] != '#'):
-    
-    #------------------------------ split about '=' charact.
+
+        # ------------------------------ split about '=' charact.
         ltag = line.split("=")
         kind = ltag[0].upper()
-        
-        if   (kind == "MSHID"):
-        
-    #----------------------------------- parse MSHID struct.
+
+        if (kind == "MSHID"):
+
+            # ----------------------------------- parse MSHID struct.
             data = ltag[1].split(";")
 
             if (len(data) > 1):
                 mesh.mshID = \
-            data[1].strip().lower()
-            
+                    data[1].strip().lower()
+
         elif (kind == "NDIMS"):
-        
-    #----------------------------------- parse NDIMS struct.
+
+            # ----------------------------------- parse NDIMS struct.
             mesh.ndims = int(ltag[1])
-        
+
         elif (kind == "RADII"):
-    
-    #----------------------------------- parse RADII struct.
-            loadradii(mesh,file,ltag)
-    
+
+            # ----------------------------------- parse RADII struct.
+            loadradii(mesh, file, ltag)
+
         elif (kind == "POINT"):
-    
-    #----------------------------------- parse POINT struct.
-            loadpoint(mesh,file,ltag)
+
+            # ----------------------------------- parse POINT struct.
+            loadpoint(mesh, file, ltag)
 
         elif (kind == "POWER"):
-    
-    #----------------------------------- parse POWER struct.
-            loadpower(mesh,file,ltag)
+
+            # ----------------------------------- parse POWER struct.
+            loadpower(mesh, file, ltag)
 
         elif (kind == "VALUE"):
-   
-    #----------------------------------- parse VALUE struct.
-            loadvalue(mesh,file,ltag)
-                
+
+            # ----------------------------------- parse VALUE struct.
+            loadvalue(mesh, file, ltag)
+
         elif (kind == "EDGE2"):
-        
-    #----------------------------------- parse EDGE2 struct.
-            loadedge2(mesh,file,ltag)
-                
+
+            # ----------------------------------- parse EDGE2 struct.
+            loadedge2(mesh, file, ltag)
+
         elif (kind == "TRIA3"):
-   
-    #----------------------------------- parse TRIA3 struct.
-            loadtria3(mesh,file,ltag)
-                
+
+            # ----------------------------------- parse TRIA3 struct.
+            loadtria3(mesh, file, ltag)
+
         elif (kind == "QUAD4"):
-   
-    #----------------------------------- parse QUAD4 struct.
-            loadquad4(mesh,file,ltag)
-                
+
+            # ----------------------------------- parse QUAD4 struct.
+            loadquad4(mesh, file, ltag)
+
         elif (kind == "TRIA4"):
-   
-    #----------------------------------- parse TRIA4 struct.
-            loadtria4(mesh,file,ltag)
-                
+
+            # ----------------------------------- parse TRIA4 struct.
+            loadtria4(mesh, file, ltag)
+
         elif (kind == "HEXA8"):
-   
-    #----------------------------------- parse HEXA8 struct.
-            loadhexa8(mesh,file,ltag)
+
+            # ----------------------------------- parse HEXA8 struct.
+            loadhexa8(mesh, file, ltag)
 
         elif (kind == "PYRA5"):
-   
-    #----------------------------------- parse PYRA5 struct.
-            loadpyra5(mesh,file,ltag)
+
+            # ----------------------------------- parse PYRA5 struct.
+            loadpyra5(mesh, file, ltag)
 
         elif (kind == "WEDG6"):
-   
-    #----------------------------------- parse WEDG6 struct.
-            loadwedg6(mesh,file,ltag)
+
+            # ----------------------------------- parse WEDG6 struct.
+            loadwedg6(mesh, file, ltag)
 
         elif (kind == "BOUND"):
-   
-    #----------------------------------- parse BOUND struct.
-            loadbound(mesh,file,ltag)
+
+            # ----------------------------------- parse BOUND struct.
+            loadbound(mesh, file, ltag)
 
         elif (kind == "COORD"):
-   
-    #----------------------------------- parse COORD struct.
-            loadcoord(mesh,file,ltag)
-        
+
+            # ----------------------------------- parse COORD struct.
+            loadcoord(mesh, file, ltag)
+
     return
 
 
-def loadmsh(name,mesh):
+def loadmsh(name, mesh):
     """
     LOADMSH: load a JIGSAW MSH obj. from file.
 
@@ -600,32 +601,29 @@ def loadmsh(name,mesh):
 
     Data in MESH is loaded on-demand -- any objects included
     in the file will be read.
-    
+
     """
 
-    if (not isinstance(name,str)):
+    if (not isinstance(name, str)):
         raise Exception("Incorrect type: NAME.")
-        
-    if (not isinstance(mesh,jigsaw_msh_t)):
+
+    if (not isinstance(mesh, jigsaw_msh_t)):
         raise Exception("Incorrect type: MESH.")
 
     with Path(name).open("r") as file:
         while (True):
-        
-    #--------------------------- get the next line from file    
-            line = file.readline ()
-            
+
+            # --------------------------- get the next line from file
+            line = file.readline()
+
             if (len(line) != +0):
 
-    #--------------------------- parse next non-null section
+                # --------------------------- parse next non-null section
                 loadlines(
-                    mesh,file,line)                    
-            
+                    mesh, file, line)
+
             else:
-    #--------------------------- reached end-of-file: done!!
+                # --------------------------- reached end-of-file: done!!
                 break
 
     return
-
-
-
