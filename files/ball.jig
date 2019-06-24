@@ -1,7 +1,0 @@
-# ball.jig config. file; created by JIGSAW's PYTHON interface 
-  GEOM_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/ball.msh
-  HFUN_SCAL=absolute
-  HFUN_HMAX=200.0
-  MESH_FILE=/home/dengwirda/Dev/jigsaw/jigsaw-geo-python-cpy/files/mesh.msh
-  MESH_DIMS=2
-  OPTM_QLIM=0.95
