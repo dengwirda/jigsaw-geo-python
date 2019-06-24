@@ -10,6 +10,8 @@ from tests.case_5_ import case_5_
 
 import os
 import argparse
+import matplotlib.pyplot as plt
+
 
 def example(IDnumber=1,savefigs=False):
 
@@ -18,11 +20,11 @@ def example(IDnumber=1,savefigs=False):
     if savefigs: plt.switch_backend ("Agg")
 
 #--------------- delegate to the individual example cases...
- 
+
     filepath = os.path.join(
         os.path.abspath(
         os.path.dirname(__file__)),"files")
-   
+
     if   (IDnumber == +1):
         case_1_(filepath,savefigs)
 
@@ -45,17 +47,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument("--IDnumber", dest="IDnumber", action="store_true",
-                        help="Run EXAMPLE(IDNUMBER).")
+    parser.add_argument("--IDnumber", dest="IDnumber", type=int,
+                        required=True, help="Run example with this ID (1-5).")
 
     parser.add_argument("--savefigs", dest="savefigs", action="store_true",
-                        help="Set this flag to save figures to file rather" 
+                        help="Set this flag to save figures to file rather"
                              "than loading graphics.")
-    
+
     args = parser.parse_args()
 
-    example(IDnumber = args.IDnumber,
-            savefigs = args.savefigs)
+    example(IDnumber=args.IDnumber,
+            savefigs=args.savefigs)
 
 
 
