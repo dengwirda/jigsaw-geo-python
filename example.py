@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import jigsawpy
-
 from tests.case_1_ import case_1_
 from tests.case_2_ import case_2_
 from tests.case_3_ import case_3_
@@ -13,32 +11,33 @@ import argparse
 import matplotlib.pyplot as plt
 
 
-def example(IDnumber=1,savefigs=False):
+def example(IDnumber=1, savefigs=False):
 
-#--------------- don't disp. to screen, write to png backend
+    # --------------- don't disp. to screen, write to png backend
 
-    if savefigs: plt.switch_backend ("Agg")
+    if savefigs:
+        plt.switch_backend("Agg")
 
-#--------------- delegate to the individual example cases...
+# --------------- delegate to the individual example cases...
 
     filepath = os.path.join(
         os.path.abspath(
-        os.path.dirname(__file__)),"files")
+            os.path.dirname(__file__)), "files")
 
-    if   (IDnumber == +1):
-        case_1_(filepath,savefigs)
+    if (IDnumber == +1):
+        case_1_(filepath, savefigs)
 
     elif (IDnumber == +2):
-        case_2_(filepath,savefigs)
+        case_2_(filepath, savefigs)
 
     elif (IDnumber == +3):
-        case_3_(filepath,savefigs)
+        case_3_(filepath, savefigs)
 
     elif (IDnumber == +4):
-        case_4_(filepath,savefigs)
+        case_4_(filepath, savefigs)
 
     elif (IDnumber == +5):
-        case_5_(filepath,savefigs)
+        case_5_(filepath, savefigs)
 
     return
 
@@ -58,6 +57,3 @@ if __name__ == "__main__":
 
     example(IDnumber=args.IDnumber,
             savefigs=args.savefigs)
-
-
-

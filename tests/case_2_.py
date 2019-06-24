@@ -18,18 +18,19 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 from matplotlib.collections import LineCollection
 
-def case_2_(filepath,savefigs=False):
 
-#------------------------------------ define JIGSAW geometry
+def case_2_(filepath, savefigs=False):
+
+    # ------------------------------------ define JIGSAW geometry
 
     geom_file = \
-        str (Path(filepath)/"lake.msh")
+        str(Path(filepath) / "lake.msh")
 
     geom = jigsawpy.jigsaw_msh_t()
 
     jigsawpy.loadmsh(geom_file, geom)
 
-#------------------------------------ the lo-resolution case
+# ------------------------------------ the lo-resolution case
 
     print("Call libJIGSAW: case 2a.")
 
@@ -40,25 +41,25 @@ def case_2_(filepath,savefigs=False):
     opts.mesh_dims = +2
     opts.mesh_rad2 = +1.20
 
-    jigsawpy.lib.jigsaw(opts,geom,mesh)
+    jigsawpy.lib.jigsaw(opts, geom, mesh)
 
     fig = plt.figure(1)
-    axi = fig.add_subplot(1,1,1)
-    axi.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
+    axi = fig.add_subplot(1, 1, 1)
+    axi.triplot(tri.Triangulation(
+        mesh.vert2["coord"][:, 0],
+        mesh.vert2["coord"][:, 1],
+        mesh.tria3["index"]), linewidth=0.500)
 
     vert = geom.vert2["coord"]
     edge = geom.edge2["index"]
     eONE = vert[edge[:, 0], :]
     eTWO = vert[edge[:, 1], :]
     line = LineCollection(
-      np.stack((eONE,eTWO),axis=1),color="k")
+        np.stack((eONE, eTWO), axis=1), color="k")
     axi.add_collection(line)
     plt.axis("equal")
 
-#------------------------------------ the hi-resolution case
+# ------------------------------------ the hi-resolution case
 
     print("Call libJIGSAW: case 2b.")
 
@@ -69,21 +70,21 @@ def case_2_(filepath,savefigs=False):
     opts.mesh_dims = +2
     opts.mesh_rad2 = +1.20
 
-    jigsawpy.lib.jigsaw(opts,geom,mesh)
+    jigsawpy.lib.jigsaw(opts, geom, mesh)
 
     fig = plt.figure(2)
-    axi = fig.add_subplot(1,1,1)
-    axi.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
+    axi = fig.add_subplot(1, 1, 1)
+    axi.triplot(tri.Triangulation(
+        mesh.vert2["coord"][:, 0],
+        mesh.vert2["coord"][:, 1],
+        mesh.tria3["index"]), linewidth=0.500)
 
     vert = geom.vert2["coord"]
     edge = geom.edge2["index"]
     eONE = vert[edge[:, 0], :]
     eTWO = vert[edge[:, 1], :]
     line = LineCollection(
-      np.stack((eONE,eTWO),axis=1),color="k")
+        np.stack((eONE, eTWO), axis=1), color="k")
     axi.add_collection(line)
     plt.axis("equal")
 
@@ -92,9 +93,7 @@ def case_2_(filepath,savefigs=False):
         plt.savefig("case_2a.png")
         plt.figure(2)
         plt.savefig("case_2b.png")
-    else: plt.show ()
+    else:
+        plt.show()
 
     return
-
-
-
