@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 import jigsawpy
- 
+
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
@@ -26,15 +26,15 @@ def case_5_(filepath,savefigs=False):
 
     opts.geom_file = \
         str(Path(filepath)/"ball.msh")  # GEOM file
-        
+
     opts.jcfg_file = \
         str(Path(filepath)/"ball.jig")  # JCFG file
-    
+
     opts.mesh_file = \
         str(Path(filepath)/"mesh.msh")  # MESH file
 
 #------------------------------------ define JIGSAW geometry
-    
+
     geom.mshID = "ellipsoid-mesh"
     geom.radii = np.array(
         [+6371., +6371., +6371.],
@@ -43,11 +43,11 @@ def case_5_(filepath,savefigs=False):
     jigsawpy.savemsh(
               opts.geom_file,geom)
 
-#------------------------------------ build mesh via JIGSAW! 
-  
+#------------------------------------ build mesh via JIGSAW!
+
     opts.hfun_scal = "absolute"
-    opts.hfun_hmax = +200. 
-    
+    opts.hfun_hmax = +200.
+
     opts.mesh_dims = +2                 # 2-dim. simplexes
 
     opts.optm_qlim = +.95
@@ -55,8 +55,7 @@ def case_5_(filepath,savefigs=False):
     jigsawpy.cmd.jigsaw(opts,mesh)
 
     fig = plt.figure(1)
-    axi = fig.add_subplot(
-    111,aspect="equal",projection="3d")
+    axi = fig.add_subplot(111, projection="3d")
     axi.plot_trisurf(
         mesh.vert3["coord"][:, 0], \
         mesh.vert3["coord"][:, 1], \
@@ -64,12 +63,12 @@ def case_5_(filepath,savefigs=False):
     triangles=mesh.tria3["index"], \
     edgecolor="black",color="white", \
     linewidth=0.1000,alpha=0.7500)
-    
+
     if savefigs:
         plt.figure(1)
         plt.savefig("case_5_.png")
     else: plt.show ()
-    
+
     return
 
 
