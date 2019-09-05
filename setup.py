@@ -2,7 +2,6 @@
 import io, os
 import subprocess
 import shutil
-import pathlib
 
 from setuptools import setup, find_packages, Command
 
@@ -35,8 +34,7 @@ CLASSIFY = [
 here = os.path.abspath(os.path.dirname(__file__))
 
 try:
-    with io.open(os.path.join( \
-        here,"README.md"),encoding="utf-8") as f:
+    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
         LONG_DESCRIPTION = "\n"+f.read()
 
 except FileNotFoundError:
@@ -51,95 +49,76 @@ class build_external(Command):
 
     def initialize_options(self): pass
 
-    def   finalize_options(self): pass
+    def finalize_options(self): pass
 
     def run(self):
         """
         The actual cmake-based build steps for JIGSAW
-        
+
         """
-        if (self.dry_run): return
+        if (self.dry_run):
+            return
 
         cwd_pointer = os.getcwd()
 
         try:
-            self.announce("cmake config.",level=3)
+            self.announce("cmake config.", level=3)
 
-            source_path = str(
-            pathlib.Path(here)/"_ext_"/"jigsaw")
+            source_path = os.path.join(here, '_ext_' 'jigsaw')
 
-            builds_path = str(
-            pathlib.Path(source_path) / "build")
+            builds_path = os.path.join(source_path, 'build')
 
-            os.makedirs(builds_path,exist_ok=True)
+            os.makedirs(builds_path, exist_ok=True)
 
-            exesrc_path = str(
-            pathlib.Path(source_path) /  "bin" )
+            exesrc_path = os.path.join(source_path, 'bin')
+            libsrc_path = os.path.join(source_path, 'lib')
+            target_path = os.path.join(source_path, 'jigsawpy')
 
-            libsrc_path = str(
-            pathlib.Path(source_path) /  "lib" ) 
+            exedst_path = os.path.join(target_path, '_bin')
+            libdst_path = os.path.join(target_path, '_lib')
 
-            target_path = str(
-                pathlib.Path(here) / "jigsawpy")
-
-            exedst_path = str(
-            pathlib.Path(target_path) / "_bin" )
-
-            libdst_path = str(
-            pathlib.Path(target_path) / "_lib" )
-
-            shutil.rmtree(
-                exedst_path,ignore_errors=True )
-            shutil.rmtree(
-                libdst_path,ignore_errors=True )
+            shutil.rmtree(exedst_path, ignore_errors=True)
+            shutil.rmtree(libdst_path, ignore_errors=True)
 
             os.chdir(builds_path)
 
-            config_call = \
-        ["cmake", "..","-DCMAKE_BUILD_TYPE=Release"]
+            config_call = ["cmake", "..", "-DCMAKE_BUILD_TYPE=Release"]
 
-            subprocess.run(config_call,check=True)
+            subprocess.run(config_call, check=True)
 
-            self.announce("cmake complie",level=3)
+            self.announce("cmake complie", level=3)
 
-            compilecall = \
-        ["cmake","--build",".","--config","Release",
-                               "--target","install"]
+            compilecall = ["cmake", "--build", ".", "--config", "Release",
+                           "--target", "install"]
 
-            subprocess.run(compilecall,check=True)
+            subprocess.run(compilecall, check=True)
 
-            self.announce("cmake cleanup",level=3)
+            self.announce("cmake cleanup", level=3)
 
-            shutil.copytree(exesrc_path,exedst_path)
-            shutil.copytree(libsrc_path,libdst_path)
+            shutil.copytree(exesrc_path, exedst_path)
+            shutil.copytree(libsrc_path, libdst_path)
 
         finally:
             os.chdir(cwd_pointer)
 
-            shutil.rmtree (builds_path)
+            shutil.rmtree(builds_path)
 
 
 setup(
-    name = NAME,
-    version = VERSION,
-    description = DESCRIPTION,
-    long_description = LONG_DESCRIPTION,
-    long_description_content_type = "text/markdown",
-    license = "custom",    
-    author = AUTHOR,
-    author_email = AUTHOR_EMAIL,
-    python_requires = REQUIRES_PYTHON,
-    keywords = KEYWORDS,    
-    url = URL,
-    packages = find_packages (),
-    cmdclass={
-        "build_external" : build_external
-        },
-    package_data = {"jigsawpy": ["_bin/*", "_lib/*"]
-        },
-    install_requires = REQUIRED,
-    classifiers = CLASSIFY
+    name=NAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
+    license="custom",
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    python_requires=REQUIRES_PYTHON,
+    keywords=KEYWORDS,
+    url=URL,
+    packages=find_packages(),
+    cmdclass={"build_external": build_external},
+    package_data={"jigsawpy": ["_bin/*", "_lib/*"]},
+    install_requires=REQUIRED,
+    classifiers=CLASSIFY
 )
-
-
-
