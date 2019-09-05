@@ -3,6 +3,7 @@ import ctypes as ct
 import numpy as np
 import os
 import inspect
+import platform
 
 from pathlib import Path
 
@@ -38,13 +39,17 @@ if (jlibname == Path()):
     filepath = \
         (Path(filename).resolve()).parent
 
-    if (os.name == "nt"):
+    if platform.system() == "Windows":
         jlibname = \
             filepath / "_lib" / "jigsaw.dll"
 
-    elif (os.name == "posix"):
+    elif platform.system() == "Linux":
         jlibname = \
             filepath / "_lib" / "libjigsaw.so"
+
+    elif platform.system() == "Darwin":
+        jlibname = \
+            filepath / "_lib" / "libjigsaw.dylib"
 
     else:
         jlibname = Path()
@@ -54,11 +59,14 @@ if (jlibname == Path()):
 
 if (jlibname == Path()):
     # ---------------------------- search machine path for binary
-    if (os.name == "nt"):
+    if platform.system() == "Windows":
         jlibname = Path("jigsaw.dll")
 
-    elif (os.name == "posix"):
+    elif platform.system() == "Linux":
         jlibname = Path("libjigsaw.so")
+
+    elif platform.system() == "Darwin":
+        jlibname = Path("libjigsaw.dylib")
 
     else:
         jlibname = Path()
@@ -66,8 +74,6 @@ if (jlibname == Path()):
 if (jlibname != Path()):
     # ---------------------------- load jigsaw library via ctypes
     jlib = ct.cdll.LoadLibrary(str(jlibname))
-
-   #print( jlibname )
 
 else:
     raise Exception("JIGSAW's lib not found")
