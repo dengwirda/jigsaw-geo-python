@@ -51,18 +51,16 @@ def certifypoint(data,stag,KIND):
     return
 
 
-def certifyvalue(vals,stag,nval):
+def certifyvalue(data, stag):
 
-    if (vals.ndim != +2):
+    if (data.ndim != +1):
         raise Exception("Invalid "+stag+" size.")
 
-    if (vals.dtype != jigsaw_msh_t.REALS_t):
+    if (data.dtype != jigsaw_msh_t.REALS_t):
         raise Exception("Invalid "+stag+" type.")
 
     if (not np.isfinite(data).all()):
         raise Exception("Invalid "+stag+" data.")
-
-    return
 
 
 def certifycells(cell,stag,KIND):
