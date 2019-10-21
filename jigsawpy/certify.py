@@ -103,7 +103,7 @@ def certifyindex(data, stag, KIND):
 def certifymesht(mesh):
 
     if certifyarray(mesh.radii, "MESH.RADII"):
-        certifyradii(mesh.radii, "MESH.RADII")
+        certifyradii(mesh.radii, "MESH.RADII", jigsaw_msh_t.REALS_t)
 
     if certifyarray(mesh.vert2, "MESH.VERT2"):
         certifypoint(mesh.vert2, "MESH.VERT2", jigsaw_msh_t.VERT2_t)
@@ -112,7 +112,7 @@ def certifymesht(mesh):
         certifypoint(mesh.vert3, "MESH.VERT3", jigsaw_msh_t.VERT3_t)
 
     if certifyarray(mesh.power, "MESH.POWER"):
-        certifyvalue(mesh.power, "MESH.POWER")
+        certifyvalue(mesh.power, "MESH.POWER", jigsaw_msh_t.REALS_t)
 
     if certifyarray(mesh.value, "MESH.VALUE"):
         certifyvalue(mesh.value, "MESH.VALUE", jigsaw_msh_t.REALS_t)
