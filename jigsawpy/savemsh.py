@@ -95,30 +95,19 @@ def savepower(mesh,file):
     return
 
 
-def savevalue(mesh,file):
+def savevalue(mesh, file):
     """
     SAVEVALUE: save the VALUE data structure to file.
-    
     """
-    npos = np.size(mesh.value,0)
-    nval = np.size(mesh.value,1)
-
-    file.write ( "VALUE=" + \
-        str(npos) + ";" + str(nval) + "\n")
-
-    data = mesh.value[:]
-
-    for ipos in range(mesh.value.size):
+    npos = np.size(mesh.value, 0)
+    nval = np.size(mesh.value, 1)
+    file.write(f"VALUE={npos};{nval}\n")
+    for ipos in range(npos):
         fstr = ""
-        for ival in range(nval-1):
-            fstr = fstr + \
-            f"{data[ipos,ival]:.18G};"
-        fstr = fstr + \
-            f"{data[ipos,nval]:.18G}\n"
-
+        for ival in range(nval):
+            fstr = fstr + f"{mesh.value[ipos,ival]:.18G};"
+        fstr = fstr[:-1] + "\n"
         file.write(fstr)
-
-    return
 
 
 def saveedge2(mesh,file):
