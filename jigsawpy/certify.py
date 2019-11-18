@@ -46,7 +46,7 @@ def certifypoint(data, stag, KIND):
 
 def certifyvalue(data, stag, KIND):
 
-    if (data.ndim != +1):
+    if (data.ndim != +2):
         raise Exception("Invalid "+stag+" size.")
 
     if (data.dtype != KIND):
