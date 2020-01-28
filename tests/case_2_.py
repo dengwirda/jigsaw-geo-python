@@ -1,100 +1,121 @@
 
-"""
-* DEMO-2 --- generate meshes for a lake superior geometry,
-*   demonstrating the use of "restricted"-Delaunay meshes to
-*   resample complex boundary definitions at user-defined
-*   resolution.
-*
-* These examples call to JIGSAW via its api.-lib. interface.
-*
-"""
-
-from pathlib import Path
+import os
 import numpy as np
+from scipy import interpolate
 
 import jigsawpy
 
-import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib.collections import LineCollection
 
-def case_2_(filepath,savefigs=False):
+def case_2_(src_path, dst_path):
+
+# DEMO-2: generate a regionally-refined global grid with a
+# high-resolution 37.5km patch embedded in a uniform 150km
+# background grid.
+
+    opts = jigsawpy.jigsaw_jig_t()
+
+    topo = jigsawpy.jigsaw_msh_t()
+
+    geom = jigsawpy.jigsaw_msh_t()
+    hfun = jigsawpy.jigsaw_msh_t()
+    mesh = jigsawpy.jigsaw_msh_t()
+
+#------------------------------------ setup files for JIGSAW
+
+    opts.geom_file = \
+        os.path.join(src_path, "eSPH.msh")
+
+    opts.jcfg_file = \
+        os.path.join(dst_path, "eSPH.jig")
+
+    opts.mesh_file = \
+        os.path.join(dst_path, "mesh.msh")
+
+    opts.hfun_file = \
+        os.path.join(dst_path, "spac.msh")
 
 #------------------------------------ define JIGSAW geometry
 
-    geom_file = \
-        str (Path(filepath)/"lake.msh")
+    geom.mshID = "ellipsoid-mesh"
+    geom.radii = np.full(
+        3, 6.371E+003, dtype=geom.REALS_t)
 
-    geom = jigsawpy.jigsaw_msh_t()
+    jigsawpy.savemsh(opts.geom_file, geom)
 
-    jigsawpy.loadmsh(geom_file, geom)
+#------------------------------------ define spacing pattern
 
-#------------------------------------ the lo-resolution case
+    hfun.mshID = "ellipsoid-grid"
+    hfun.radii = geom.radii
 
-    print("Call libJIGSAW: case 2a.")
+    hfun.xgrid = np.linspace(
+        -1. * np.pi, +1. * np.pi, 360)
 
-    opts = jigsawpy.jigsaw_jig_t()
-    mesh = jigsawpy.jigsaw_msh_t()
+    hfun.ygrid = np.linspace(
+        -.5 * np.pi, +.5 * np.pi, 180)
 
-    opts.hfun_hmax = 0.060
-    opts.mesh_dims = +2
-    opts.mesh_rad2 = +1.20
+    xmat, ymat = \
+        np.meshgrid(hfun.xgrid, hfun.ygrid)
 
-    jigsawpy.lib.jigsaw(opts,geom,mesh)
+    hfun.value = +150. - 112.5 * np.exp(-(
+        +1.5 * (xmat + 1.0) ** 2 +
+        +1.5 * (ymat - 0.5) ** 2) ** 4)
 
-    fig = plt.figure(1)
-    axi = fig.add_subplot(1,1,1)
-    axi.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
+    jigsawpy.savemsh(opts.hfun_file, hfun)
 
-    vert = geom.vert2["coord"]
-    edge = geom.edge2["index"]
-    eONE = vert[edge[:, 0], :]
-    eTWO = vert[edge[:, 1], :]
-    line = LineCollection(
-      np.stack((eONE,eTWO),axis=1),color="k")
-    axi.add_collection(line)
-    plt.axis("equal")
+#------------------------------------ make mesh using JIGSAW
 
-#------------------------------------ the hi-resolution case
+    opts.hfun_scal = "absolute"
+    opts.hfun_hmax = float("inf")       # null HFUN limits
+    opts.hfun_hmin = float(+0.00)
 
-    print("Call libJIGSAW: case 2b.")
+    opts.mesh_dims = +2                 # 2-dim. simplexes
 
-    opts = jigsawpy.jigsaw_jig_t()
-    mesh = jigsawpy.jigsaw_msh_t()
+    opts.optm_qlim = +9.5E-01           # tighter opt. tol
+    opts.optm_iter = +32
+    opts.optm_qtol = +1.0E-05
 
-    opts.hfun_hmax = 0.010
-    opts.mesh_dims = +2
-    opts.mesh_rad2 = +1.20
+    jigsawpy.cmd.tetris(opts, 3, mesh)
 
-    jigsawpy.lib.jigsaw(opts,geom,mesh)
+    scr2 = jigsawpy.triscr2(            # "quality" metric
+        mesh.point["coord"],
+        mesh.tria3["index"])
 
-    fig = plt.figure(2)
-    axi = fig.add_subplot(1,1,1)
-    axi.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
+#------------------------------------ save mesh for Paraview
 
-    vert = geom.vert2["coord"]
-    edge = geom.edge2["index"]
-    eONE = vert[edge[:, 0], :]
-    eTWO = vert[edge[:, 1], :]
-    line = LineCollection(
-      np.stack((eONE,eTWO),axis=1),color="k")
-    axi.add_collection(line)
-    plt.axis("equal")
+    jigsawpy.loadmsh(os.path.join(
+        src_path, "topo.msh"), topo)
 
-    if savefigs:
-        plt.figure(1)
-        plt.savefig("case_2a.png")
-        plt.figure(2)
-        plt.savefig("case_2b.png")
-    else: plt.show ()
+#------------------------------------ a very rough land mask
+
+    apos = jigsawpy.R3toS2(
+        geom.radii, mesh.point["coord"][:])
+
+    apos = apos * 180. / np.pi
+
+    zfun = interpolate.RectBivariateSpline(
+        topo.ygrid, topo.xgrid, topo.value)
+
+    mesh.value = zfun(
+        apos[:, 1], apos[:, 0], grid=False)
+
+    cell = mesh.tria3["index"]
+
+    zmsk = \
+        mesh.value[cell[:, 0]] + \
+        mesh.value[cell[:, 1]] + \
+        mesh.value[cell[:, 2]]
+    zmsk = zmsk / +3.0
+
+    mesh.tria3 = mesh.tria3[zmsk < +0.]
+
+    print("Saving to ../cache/case_2a.vtk")
+
+    jigsawpy.savevtk(os.path.join(
+        dst_path, "case_2a.vtk"), mesh)
+
+    print("Saving to ../cache/case_2b.vtk")
+
+    jigsawpy.savevtk(os.path.join(
+        dst_path, "case_2b.vtk"), hfun)
 
     return
-
-
-

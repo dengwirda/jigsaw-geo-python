@@ -1,149 +1,95 @@
 
-"""
-* DEMO-3 -- generate a grid for the Australian region, using
-*   scaled ocean-depth as a mesh-spacing indicator.
-*
-* These examples call to JIGSAW via its cmd.-line interface.
-*
-"""
-
-from pathlib import Path
+import os
+import copy
 import numpy as np
 
 import jigsawpy
- 
-import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib.collections import LineCollection
 
-def case_3_(filepath,savefigs=False):
+
+def case_3_(src_path, dst_path):
+
+# DEMO-3: generate multi-resolution spacing, via local refi-
+# nement along coastlines and shallow ridges. Global grid
+# resolution is 150KM, background resolution is 67KM and the
+# min. adaptive resolution is 33KM.
 
     opts = jigsawpy.jigsaw_jig_t()
 
     topo = jigsawpy.jigsaw_msh_t()
+
     geom = jigsawpy.jigsaw_msh_t()
-    hmat = jigsawpy.jigsaw_msh_t()
-    mesh = jigsawpy.jigsaw_msh_t()
+
+    hraw = jigsawpy.jigsaw_msh_t()
+    hlim = jigsawpy.jigsaw_msh_t()
 
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        str(Path(filepath)/"aust.msh")  # GEOM file
-        
+        os.path.join(src_path, "eSPH.msh")
+
     opts.jcfg_file = \
-        str(Path(filepath)/"aust.jig")  # JCFG file
-    
-    opts.mesh_file = \
-        str(Path(filepath)/"mesh.msh")  # MESH file
-    
+        os.path.join(dst_path, "eSPH.jig")
+
     opts.hfun_file = \
-        str(Path(filepath)/"hfun.msh")  # HFUN file
+        os.path.join(dst_path, "spac.msh")
 
-#------------------------------------ setup TOPO for spacing
+#------------------------------------ define JIGSAW geometry
 
-    print ("Load topo-data: case 3a.")
+    geom.mshID = "ellipsoid-mesh"
+    geom.radii = np.full(
+        3, 6.371E+003, dtype=geom.REALS_t)
 
-    geom_file = \
-        str(Path(filepath)/"aust.msh")
+    jigsawpy.savemsh(opts.geom_file, geom)
 
-    topo_file = \
-        str(Path(filepath)/"topo.msh")
+#------------------------------------ define spacing pattern
 
-    jigsawpy.loadmsh(geom_file,geom)
-    jigsawpy.loadmsh(topo_file,topo)
+    jigsawpy.loadmsh(os.path.join(
+        src_path, "topo.msh"), topo)
 
-    topo.value = topo.value.reshape(
-      (topo.xgrid.size,topo.ygrid.size)).T
-   
-    xgeo = geom.vert2["coord"][:, 0]
-    ygeo = geom.vert2["coord"][:, 1]
+    hraw.mshID = "ellipsoid-grid"
+    hraw.radii = geom.radii
 
-    xmin = xgeo.min(); xmax = xgeo.max()
-    ymin = ygeo.min(); ymax = ygeo.max()
+    hraw.xgrid = topo.xgrid * np.pi / 180.
+    hraw.ygrid = topo.ygrid * np.pi / 180.
 
-    ipos = np.argwhere(
-        np.logical_and(
-    topo.xgrid>=xmin, topo.xgrid<=xmax))
+    hfn0 = +150.                        # global spacing
+    hfn2 = +33.                         # adapt. spacing
+    hfn3 = +67.                         # arctic spacing
 
-    ione = int(ipos[+1]-1)
-    iend = int(ipos[-1]+2)
+    hraw.value = np.sqrt(
+        np.maximum(-topo.value, 0.0))
 
-    jpos = np.argwhere(
-        np.logical_and(
-    topo.ygrid>=ymin, topo.ygrid<=ymax))
+    hraw.value = \
+        np.maximum(hraw.value, hfn2)
+    hraw.value = \
+        np.minimum(hraw.value, hfn3)
 
-    jone = int(jpos[+1]-1)
-    jend = int(jpos[-1]+2)
+    mask = hraw.ygrid < 40. * np.pi / 180.
 
-#------------------------------------ compute HFUN over TOPO
+    hraw.value[mask] = hfn0
 
-    hmat.mshID = "euclidean-grid"
-    hmat.xgrid = np.array(
-        topo.xgrid[ione:iend],
-    dtype=jigsawpy.jigsaw_msh_t.REALS_t)
-    hmat.ygrid = np.array(
-        topo.ygrid[jone:jend],
-    dtype=jigsawpy.jigsaw_msh_t.REALS_t)
-    hmat.value = np.array(
-        topo.value[jone:jend,ione:iend],
-    dtype=jigsawpy.jigsaw_msh_t.REALS_t)
+#------------------------------------ set HFUN grad.-limiter
 
-    hmat.value = np.sqrt(
-        np.maximum(-hmat.value,+0.0) )
-    hmat.value *= 2.
+    hlim = copy.copy(hraw)
 
-    hmat.value = \
-        np.maximum(hmat.value, +10.)
-    hmat.value = \
-        np.minimum(hmat.value,+100.)
+    hlim.slope = np.full(               # |dH/dx| limits
+        topo.value.shape,
+        +0.050, dtype=hlim.REALS_t)
 
-    hmat.value /= 100.
+    jigsawpy.savemsh(opts.hfun_file, hlim)
 
-    jigsawpy.savemsh(opts.hfun_file,hmat)
-   
-#------------------------------------ build mesh via JIGSAW!
+    jigsawpy.cmd.marche(opts, hlim)
 
-    opts.hfun_scal = "absolute"
-    opts.hfun_hmax = float ("inf")      # null HFUN limits
-    opts.hfun_hmin = float (+0.00)  
-   
-    opts.mesh_dims = +2                 # 2-dim. simplexes
-    
-    opts.mesh_eps1 = +1.00
+#------------------------------------ save mesh for Paraview
 
-    opts.optm_qlim = +0.80
+    print("Saving to ../cache/case_3a.vtk")
 
-    jigsawpy.cmd.jigsaw(opts,mesh)  
+    jigsawpy.savevtk(os.path.join(
+        dst_path, "case_3a.vtk"), hraw)
 
-    fig = plt.figure(1)
-    axi = fig.add_subplot(1,1,1)    
-    axi.triplot(tri.Triangulation( \
-        mesh.vert2["coord"][:, 0], \
-        mesh.vert2["coord"][:, 1], \
-        mesh.tria3["index"]),linewidth=0.500)
+    print("Saving to ../cache/case_3b.vtk")
 
-    vert = geom.vert2["coord"]
-    edge = geom.edge2["index"]
-    eONE = vert[edge[:, 0], :]
-    eTWO = vert[edge[:, 1], :]
-    line = LineCollection(
-      np.stack((eONE,eTWO),axis=1),color="k") 
-    axi.add_collection(line)
-    plt.axis("equal")
-    
-    fig = plt.figure(2)
-    plt.contourf(
-            hmat.xgrid,hmat.ygrid,hmat.value)
-    plt.axis("equal")
-    
-    if savefigs:
-        plt.figure(1)
-        plt.savefig("case_3a.png")
-        plt.figure(2)
-        plt.savefig("case_3b.png")
-    else: plt.show ()
-    
+    jigsawpy.savevtk(os.path.join(
+        dst_path, "case_3b.vtk"), hlim)
+
     return
-
-
-
