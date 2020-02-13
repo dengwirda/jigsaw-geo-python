@@ -47,7 +47,7 @@ def case_1_(src_path, dst_path):
     opts.optm_iter = +32
     opts.optm_qtol = +1.0E-05
 
-    jigsawpy.cmd.tetris(opts, 3, mesh)
+    jigsawpy.cmd.tetris(opts, 4, mesh)
 
     scr2 = jigsawpy.triscr2(            # "quality" metric
         mesh.point["coord"],
