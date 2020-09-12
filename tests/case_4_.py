@@ -1,5 +1,7 @@
 
 import os
+import time
+import math
 import numpy as np
 from scipy import interpolate
 
@@ -24,10 +26,10 @@ def case_4_(src_path, dst_path):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        os.path.join(src_path, "eSPH.msh")
+        os.path.join(src_path, "geom.msh")
 
     opts.jcfg_file = \
-        os.path.join(dst_path, "eSPH.jig")
+        os.path.join(dst_path, "opts.jig")
 
     opts.mesh_file = \
         os.path.join(dst_path, "mesh.msh")
@@ -92,11 +94,51 @@ def case_4_(src_path, dst_path):
     opts.optm_iter = +32
     opts.optm_qtol = +1.0E-05
 
-    jigsawpy.cmd.tetris(opts, 4, mesh)
+#   opts.optm_kern = "cvt+dqdx"
 
-    scr2 = jigsawpy.triscr2(            # "quality" metric
+    rbar = np.mean(geom.radii)          # bisect heuristic
+    hbar = np.mean(hmat.value)
+    nlev = round(math.log2(
+        rbar / math.sin(.4 * math.pi) / hbar)
+    )
+
+    ttic = time.time()
+
+    jigsawpy.cmd.tetris(opts, nlev - 1, mesh)
+
+    ttoc = time.time()
+
+    print("CPUSEC =", (ttoc - ttic))
+
+    print("BISECT =", +nlev)
+
+    cost = jigsawpy.triscr2(            # quality metrics!
         mesh.point["coord"],
         mesh.tria3["index"])
+
+    print("TRISCR =", np.min(cost), np.mean(cost))
+
+    cost = jigsawpy.pwrscr2(
+        mesh.point["coord"],
+        mesh.power,
+        mesh.tria3["index"])
+
+    print("PWRSCR =", np.min(cost), np.mean(cost))
+
+    tbad = jigsawpy.centre2(
+        mesh.point["coord"],
+        mesh.power,
+        mesh.tria3["index"])
+
+    print("OBTUSE =",
+          +np.count_nonzero(np.logical_not(tbad)))
+
+    ndeg = jigsawpy.trideg2(
+        mesh.point["coord"],
+        mesh.tria3["index"])
+
+    print("TOPOL. =",
+          +np.count_nonzero(ndeg==+6) / ndeg.size)
 
 #------------------------------------ save mesh for Paraview
 
