@@ -1,5 +1,6 @@
 
 import os
+import time
 import numpy as np
 
 import jigsawpy
@@ -24,7 +25,7 @@ def case_5_(src_path, dst_path):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        os.path.join(dst_path, "proj.msh")
+        os.path.join(dst_path, "geom.msh")
 
     opts.jcfg_file = \
         os.path.join(dst_path, "aust.jig")
@@ -118,7 +119,34 @@ def case_5_(src_path, dst_path):
     opts.mesh_dims = +2                 # 2-dim. simplexes
     opts.mesh_eps1 = +1.
 
+    ttic = time.time()
+
     jigsawpy.cmd.jigsaw(opts, mesh)
+
+    ttoc = time.time()
+
+    print("CPUSEC =", (ttoc - ttic))
+
+    cost = jigsawpy.triscr2(            # quality metrics!
+        mesh.point["coord"],
+        mesh.tria3["index"])
+
+    print("TRISCR =", np.min(cost), np.mean(cost))
+
+    cost = jigsawpy.pwrscr2(
+        mesh.point["coord"],
+        mesh.power,
+        mesh.tria3["index"])
+
+    print("PWRSCR =", np.min(cost), np.mean(cost))
+
+    tbad = jigsawpy.centre2(
+        mesh.point["coord"],
+        mesh.power,
+        mesh.tria3["index"])
+
+    print("OBTUSE =",
+          +np.count_nonzero(np.logical_not(tbad)))
 
 #------------------------------------ save mesh for Paraview
 
