@@ -9,6 +9,7 @@ from tests.case_3_ import case_3_
 from tests.case_4_ import case_4_
 from tests.case_5_ import case_5_
 from tests.case_6_ import case_6_
+from tests.case_7_ import case_7_
 
 
 def example(IDnumber=0):
@@ -41,6 +42,9 @@ def example(IDnumber=0):
     elif (IDnumber == +6):
         case_6_(src_path, dst_path)
 
+    elif (IDnumber == +7):
+        case_7_(src_path, dst_path)
+
     return
 
 
@@ -49,7 +53,7 @@ if __name__ == "__main__":
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("--IDnumber", dest="IDnumber", type=int,
-                        required=True, help="Run example with ID = (1-6).")
+                        required=True, help="Run example with ID = (1-7).")
 
     args = parser.parse_args()
 
