@@ -26,7 +26,7 @@ def case_4_(src_path, dst_path):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        os.path.join(src_path, "geom.msh")
+        os.path.join(dst_path, "geom.msh")
 
     opts.jcfg_file = \
         os.path.join(dst_path, "opts.jig")

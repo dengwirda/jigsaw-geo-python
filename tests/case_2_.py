@@ -25,7 +25,7 @@ def case_2_(src_path, dst_path):
 #------------------------------------ setup files for JIGSAW
 
     opts.geom_file = \
-        os.path.join(src_path, "geom.msh")
+        os.path.join(dst_path, "geom.msh")
 
     opts.jcfg_file = \
         os.path.join(dst_path, "opts.jig")
@@ -63,7 +63,7 @@ def case_2_(src_path, dst_path):
         +1.5 * (ymat - 0.5) ** 2) ** 4)
 
     jigsawpy.savemsh(opts.hfun_file, hfun)
-
+    
 #------------------------------------ make mesh using JIGSAW
 
     opts.hfun_scal = "absolute"
